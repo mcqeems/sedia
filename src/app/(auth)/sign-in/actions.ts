@@ -33,5 +33,5 @@ export async function signInWithPassword(
     };
   }
 
-  redirect("/");
+  redirect("/dashboard");
 }
