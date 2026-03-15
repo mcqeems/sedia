@@ -18,7 +18,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Satoshi", sans-serif;
+  font-family: "Satoshi-Medium", sans-serif;
 }
 
 h1,
@@ -27,5 +27,30 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Cabinet Grotesk", sans-serif;
+  font-family: "CabinetGrotesk-ExtraBold", sans-serif;
+}
+
+@font-face {
+  font-family: "Satoshi-Medium";
+  src:
+    url("/satoshi/Fonts/WEB/fonts/Satoshi-Medium.woff2") format("woff2"),
+    url("/satoshi/Fonts/WEB/fonts/Satoshi-Medium.woff") format("woff"),
+    url("/satoshi/Fonts/WEB/fonts/Satoshi-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "CabinetGrotesk-Extrabold";
+  src:
+    url("/cabinet-grotesk/Fonts/WEB/fonts/CabinetGrotesk-Extrabold.woff2")
+    format("woff2"),
+    url("/cabinet-grotesk/Fonts/WEB/fonts/CabinetGrotesk-Extrabold.woff")
+    format("woff"),
+    url("/cabinet-grotesk/Fonts/WEB/fonts/CabinetGrotesk-Extrabold.ttf")
+    format("truetype");
+  font-weight: 800;
+  font-display: swap;
+  font-style: normal;
 }
