@@ -51,7 +51,10 @@ export default function SignUpPage() {
           minLength={6}
         />
 
-        <AuthSubmitButton idleText="Sign up" pendingText="Creating account..." />
+        <AuthSubmitButton
+          idleText="Sign up"
+          pendingText="Creating account..."
+        />
       </form>
 
       <AuthMessage state={state} />
