@@ -5,13 +5,25 @@ import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import Loader from "@/components/protected/Loader";
 import getGeoLocation from "@/lib/dashboard/getGeoLocation";
+import getGreeting from "@/lib/dashboard/getGreeting";
+
+type UserMetadata = {
+  email: string;
+  first_name: string;
+  last_name: string;
+};
+
+type ExtendedUser = User & {
+  user_metadata: UserMetadata;
+};
 
 export default function Inside() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<ExtendedUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Initialize the browser Supabase client
   const supabase = createClient();
+  const greeting = getGreeting();
 
   useEffect(() => {
     // 1. Example: Fetching user data on the client side
@@ -20,8 +32,10 @@ export default function Inside() {
         data: { user },
       } = await supabase.auth.getUser();
 
-      console.log(user);
-      setUser(user);
+      const extendedUser = user as ExtendedUser;
+
+      console.log(extendedUser.user_metadata.first_name);
+      setUser(extendedUser);
       setLoading(false);
     };
 
@@ -40,11 +54,19 @@ export default function Inside() {
   return (
     <section className="flex w-full flex-col gap-3 py-2">
       {/* Location */}
-      <div className="flex w-full flex-col gap-2 rounded-lg border border-border p-2 md:flex-row items-start md:items-center">
-        <div className="w-full py-2 font-medium">Provinsi:</div>
-        <div className="w-full py-2 font-medium">Kabupaten:</div>
-        <div className="w-full py-2 font-medium">Kecamatan:</div>
-        <div className="w-full py-2 font-medium">Kelurahan:</div>
+      <div className="flex w-full flex-col justify-between rounded-lg border border-border p-2 md:flex-row">
+        <div className="flex flex-row">
+          <p>
+            {greeting}, {user?.user_metadata.first_name}!{" "}
+          </p>
+          <span>👋</span>
+        </div>
+        <div className="flex flex-row">
+          <span>👋</span>
+          <p>
+            {greeting}, {user?.user_metadata.first_name}!{" "}
+          </p>
+        </div>
       </div>
 
       {/* Tops */}

@@ -13,6 +13,15 @@ export async function signUpWithPassword(
 ): Promise<SignUpState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "").trim();
+  const firstName = String(formData.get("first-name") ?? "").trim();
+  const lastName = String(formData.get("last-name") ?? "").trim();
+
+  const options = {
+    data: {
+      first_name: firstName,
+      last_name: lastName,
+    },
+  };
 
   if (!email || !password) {
     return {
@@ -29,7 +38,11 @@ export async function signUpWithPassword(
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options,
+  });
 
   if (error) {
     if (error.code === "over_email_send_rate_limit") {

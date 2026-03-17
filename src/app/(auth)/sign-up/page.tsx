@@ -32,6 +32,23 @@ export default function SignUpPage() {
     >
       <form className="mt-8 space-y-4" action={formAction}>
         <AuthInput
+          id="first-name"
+          name="first-name"
+          type="text"
+          label="First Name"
+          placeholder="John"
+          autoComplete="given-name"
+          required
+        />
+        <AuthInput
+          id="last-name"
+          name="last-name"
+          type="text"
+          label="Last Name"
+          placeholder="Doe"
+          autoComplete="family-name"
+        />
+        <AuthInput
           id="email"
           name="email"
           type="email"
