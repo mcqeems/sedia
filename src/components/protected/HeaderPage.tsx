@@ -12,6 +12,7 @@ export default function HeaderPage({
       <h1 className="text-3xl">{title}</h1>
       <p className="text-muted-foreground font-medium">{description}</p>
       <Image
+        loading="eager"
         src="/bg-page.png"
         alt="background page"
         width={1300}

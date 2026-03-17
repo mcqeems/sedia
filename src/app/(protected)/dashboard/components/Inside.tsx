@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import Loader from "@/components/protected/Loader";
+import getGeoLocation from "@/lib/dashboard/getGeoLocation";
 
 export default function Inside() {
   const [user, setUser] = useState<User | null>(null);
@@ -25,6 +26,7 @@ export default function Inside() {
     };
 
     getUser();
+    getGeoLocation();
   }, [supabase.auth]);
 
   if (loading) {
