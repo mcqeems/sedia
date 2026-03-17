@@ -29,7 +29,7 @@ export default function Inside() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="h-full w-full flex justify-center items-center">
         <Loader />
       </div>
     );
