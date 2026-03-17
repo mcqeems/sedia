@@ -18,9 +18,26 @@ Import `satoshi.css` at the top of you main Stylesheet.
 ```
 
 ## 5.
-You are now ready to use the following Rule in your CSS to specify the Font Style:
+You are now ready to use the following Rules in your CSS to specify each Font Style:
 ```
+font-family: Satoshi-Light;
+font-family: Satoshi-LightItalic;
+font-family: Satoshi-Regular;
+font-family: Satoshi-Italic;
 font-family: Satoshi-Medium;
+font-family: Satoshi-MediumItalic;
+font-family: Satoshi-Bold;
+font-family: Satoshi-BoldItalic;
+font-family: Satoshi-Black;
+font-family: Satoshi-BlackItalic;
+font-family: Satoshi-Variable;
+font-family: Satoshi-VariableItalic;
 
 ```
+## 6. (Optional)
+Use `font-variation-settings` rule to controll axes of variable fonts:
+wght 900.0
+
+Available axes:
+'wght' (range from 300.0 to 900.0
 
