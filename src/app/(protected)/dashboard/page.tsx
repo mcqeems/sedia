@@ -37,7 +37,7 @@ export default function Dashboard() {
       {/* Header Page */}
       <section className="w-full px-2 py-4 gap-0 md:gap-1 flex flex-col justify-center items-center rounded-2xl relative overflow-hidden">
         <h1 className="text-3xl">My Dashboard</h1>
-        <p className="text-muted-foreground font-bold">
+        <p className="text-muted-foreground font-medium">
           Pantau kondisi cuaca dan bencana di lokasi anda.
         </p>
         <Image
@@ -52,10 +52,18 @@ export default function Dashboard() {
       <section className="space-x-2 space-y-2 py-2">
         {/* Location */}
         <div className="flex flex-row gap-2 p-2 bg-accent/50 w-full">
-          <div className="w-full max-w-full py-2 bg-primary">Provinsi:</div>
-          <div className="w-full max-w-full py-2 bg-primary">Kabupaten:</div>
-          <div className="w-full max-w-full py-2 bg-primary">Kecamatan:</div>
-          <div className="w-full max-w-full py-2 bg-primary">Kelurahan:</div>
+          <div className="w-full max-w-full py-2 bg-primary font-medium">
+            Provinsi:
+          </div>
+          <div className="w-full max-w-full py-2 bg-primary font-medium">
+            Kabupaten:
+          </div>
+          <div className="w-full max-w-full py-2 bg-primary font-medium">
+            Kecamatan:
+          </div>
+          <div className="w-full max-w-full py-2 bg-primary font-medium">
+            Kelurahan:
+          </div>
         </div>
         <div className="flex md:flex-row flex-col gap-2 w-full">
           {/* Left Side */}
