@@ -1,47 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { User } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/client";
 import Loader from "@/components/protected/Loader";
 import getGeoLocation from "@/lib/dashboard/getGeoLocation";
 import getGreeting from "@/lib/dashboard/getGreeting";
-
-type UserMetadata = {
-  email: string;
-  first_name: string;
-  last_name: string;
-};
-
-type ExtendedUser = User & {
-  user_metadata: UserMetadata;
-};
+import type { ExtendedUser } from "@/lib/supabase/getUser";
+import getUser from "@/lib/supabase/getUser";
 
 export default function Inside() {
   const [user, setUser] = useState<ExtendedUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Initialize the browser Supabase client
-  const supabase = createClient();
   const greeting = getGreeting();
 
   useEffect(() => {
-    // 1. Example: Fetching user data on the client side
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      const extendedUser = user as ExtendedUser;
-
-      console.log(extendedUser.user_metadata.first_name);
-      setUser(extendedUser);
+    const fetchUser = async () => {
+      const userData = await getUser();
+      setUser(userData);
       setLoading(false);
     };
 
-    getUser();
+    fetchUser();
     getGeoLocation();
-  }, [supabase.auth]);
+  }, []);
 
   if (loading) {
     return (

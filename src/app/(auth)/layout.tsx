@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function SignUpLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;

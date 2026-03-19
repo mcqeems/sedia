@@ -1,11 +1,25 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 type SignUpState = {
   status: "idle" | "success" | "error";
   message: string;
 };
+
+async function insertProfile(userId: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("profile").insert({
+    user_id: userId,
+  });
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+  return { success: true };
+}
 
 export async function signUpWithPassword(
   _prevState: SignUpState,
@@ -45,30 +59,27 @@ export async function signUpWithPassword(
   });
 
   if (error) {
-    if (error.code === "over_email_send_rate_limit") {
-      return {
-        status: "error",
-        message:
-          "Your project is still trying to send confirmation emails and hit a send limit. Disable email confirmation in Supabase Auth settings if you want instant signup with no verification.",
-      };
-    }
-
     return {
       status: "error",
       message: error.message,
     };
   }
 
-  if (data.session) {
-    return {
-      status: "success",
-      message: "Account created and signed in.",
-    };
+  if (data.user && data.session) {
+    const profileResult = await insertProfile(data.user.id);
+
+    if (!profileResult.success) {
+      return {
+        status: "error",
+        message: `Account created, but failed to create profile: ${profileResult.message}`,
+      };
+    }
+
+    redirect("/dashboard");
   }
 
   return {
     status: "success",
-    message:
-      "Signup request created, but no session was returned. Disable email confirmation in Supabase Auth settings for no-verification signup.",
+    message: "Signup request created, but no session was returned.",
   };
 }
