@@ -1,3 +1,9 @@
+// Guide for address:
+// - Provinsi: state
+// - Kabupaten: county, city, city_district
+// - Kecamatan: municipality, suburb, district
+// - Kelurahan: village, hamlet, neighbourhood, locality
+
 interface Address {
   state: string;
   county: string;

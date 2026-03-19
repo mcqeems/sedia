@@ -1,5 +1,6 @@
 "use client";
 
+import { IconMapPin } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Loader from "@/components/protected/Loader";
 import getGeoLocation from "@/lib/dashboard/getGeoLocation";
@@ -22,7 +23,7 @@ export default function Inside() {
     };
 
     fetchUser();
-    getGeoLocation();
+    console.log(getGeoLocation());
   }, []);
 
   if (loading) {
@@ -44,7 +45,11 @@ export default function Inside() {
           <span>👋</span>
         </div>
         <div className="flex flex-row">
-          <span>👋</span>
+          <span className="flex items-center justify-center">
+            {" "}
+            <IconMapPin height={20} width={20} />
+          </span>
+
           <p>
             {greeting}, {user?.user_metadata.first_name}!{" "}
           </p>
