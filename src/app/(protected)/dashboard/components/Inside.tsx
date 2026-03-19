@@ -1,32 +1,69 @@
 "use client";
 
-import { IconMapPin } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import Loader from "@/components/protected/Loader";
 import getGeoLocation from "@/lib/dashboard/getGeoLocation";
 import getGreeting from "@/lib/dashboard/getGreeting";
 import type { ExtendedUser } from "@/lib/supabase/getUser";
 import getUser from "@/lib/supabase/getUser";
+import Bottoms from "./Bottoms";
+import Location from "./Location";
+import Tops from "./Tops";
+
+type State = {
+  user: ExtendedUser | null;
+  loadingUser: boolean;
+  geo: { latitude: string; longitude: string } | null;
+};
+
+type Action =
+  | { type: "SET_USER"; payload: ExtendedUser }
+  | { type: "SET_GEO"; payload: { latitude: string; longitude: string } };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "SET_USER":
+      return { ...state, user: action.payload, loadingUser: false };
+    case "SET_GEO":
+      return { ...state, geo: action.payload };
+    default:
+      return state;
+  }
+}
 
 export default function Inside() {
-  const [user, setUser] = useState<ExtendedUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [state, dispatch] = useReducer(reducer, {
+    user: null,
+    loadingUser: true,
+    geo: null,
+  });
 
-  // Initialize the browser Supabase client
   const greeting = getGreeting();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const userData = await getUser();
-      setUser(userData);
-      setLoading(false);
+      try {
+        const userData = await getUser();
+        dispatch({ type: "SET_USER", payload: userData });
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      }
+    };
+
+    const fetchGeo = async () => {
+      try {
+        const geoData = await getGeoLocation();
+        dispatch({ type: "SET_GEO", payload: geoData });
+      } catch (err) {
+        console.error("Failed to get geolocation:", err);
+      }
     };
 
     fetchUser();
-    console.log(getGeoLocation());
+    fetchGeo();
   }, []);
 
-  if (loading) {
+  if (state.loadingUser) {
     return (
       <div className="flex min-h-[60vh] w-full items-center justify-center">
         <Loader />
@@ -36,60 +73,9 @@ export default function Inside() {
 
   return (
     <section className="flex w-full flex-col gap-3 py-2">
-      {/* Location */}
-      <div className="flex w-full flex-col justify-between rounded-lg border border-border p-2 md:flex-row">
-        <div className="flex flex-row">
-          <p>
-            {greeting}, {user?.user_metadata.first_name}!{" "}
-          </p>
-          <span>👋</span>
-        </div>
-        <div className="flex flex-row">
-          <span className="flex items-center justify-center">
-            {" "}
-            <IconMapPin height={20} width={20} />
-          </span>
-
-          <p>
-            {greeting}, {user?.user_metadata.first_name}!{" "}
-          </p>
-        </div>
-      </div>
-
-      {/* Tops */}
-      <div className="flex w-full flex-col gap-2 md:flex-row">
-        {/* Left Side */}
-        <div className="flex w-full flex-col gap-2 rounded-lg md:max-w-lg">
-          <div className="h-[125px] w-full rounded-lg bg-primary p-4 text-primary-foreground">
-            Cuaca Hari ini
-          </div>
-          <div className="h-[300px] w-full rounded-lg bg-primary p-4 text-primary-foreground">
-            Prakiraan Cuaca selama 3 hari
-          </div>
-          <div className="h-[125px] w-full rounded-lg bg-primary p-4 text-primary-foreground">
-            Kabar Gempa bumi terbaru
-          </div>
-        </div>
-        {/* Right Side */}
-        <div className="flex w-full flex-col gap-2">
-          <div className="min-h-[300px] w-full rounded-lg bg-primary p-4 text-primary-foreground md:h-full">
-            Map
-          </div>
-          <div className="min-h-[250px] w-full rounded-lg bg-primary p-4 text-primary-foreground md:h-full">
-            AI Analysis
-          </div>
-        </div>
-      </div>
-
-      {/* Bottoms */}
-      <div className="flex w-full flex-col gap-2 md:flex-row">
-        <div className="h-[150px] w-full rounded-lg bg-primary p-4 text-primary-foreground md:max-w-[50%]">
-          Berita peringatan cuaca
-        </div>
-        <div className="h-[150px] w-full rounded-lg bg-primary p-4 text-primary-foreground md:max-w-[50%]">
-          Berita 15 gempa terakhir dengan magnitudo 5+
-        </div>
-      </div>
+      <Location greeting={greeting} user={state.user} geo={state.geo} />
+      <Tops />
+      <Bottoms />
     </section>
   );
 }
