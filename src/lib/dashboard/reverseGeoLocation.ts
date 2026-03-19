@@ -6,6 +6,7 @@
 
 interface Address {
   state: string;
+  region: string;
   county: string;
   city: string;
   city_district: string;

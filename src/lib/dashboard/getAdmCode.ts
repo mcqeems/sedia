@@ -1,3 +1,4 @@
+import { useState } from "react";
 import KabupatenData from "@/data/kabupaten.json";
 import KecamatanData from "@/data/kecamatan.json";
 import KelurahanDataRaw from "@/data/kelurahan.json";
@@ -22,36 +23,76 @@ export default function getAdmCode({
   kecamatan: string;
   kelurahan: string;
 }) {
-  // Pronvisi
-  const getProvinsi = ProvinsiData.find(({ name }) => name === provinsi);
-  const getProvinsiId = getProvinsi?.id;
+  const [prov, setProv] = useState<string | undefined>("");
+  const [kab, setKab] = useState<string | undefined>("");
+  const [kec, setKec] = useState<string | undefined>("");
+  const [kel, setKel] = useState<string | undefined>("");
+
+  setProv(provinsi);
+  setKab(kabupaten);
+  setKec(kecamatan);
+  setKel(kelurahan);
+
+  // Check props
+  if (!provinsi || provinsi === "") {
+    const getProvinsi = KabupatenData.find(({ name }) =>
+      name.toLowerCase().includes(kabupaten),
+    );
+    setProv(getProvinsi?.name);
+  }
+
+  if (!kabupaten || kabupaten === "") {
+    const getKabupaten = KecamatanData.find(({ name }) =>
+      name.toLowerCase().includes(kecamatan),
+    );
+    setKab(getKabupaten?.name);
+  }
+
+  if (!kecamatan || kecamatan === "") {
+    const getKecamatan = KelurahanData.find(({ name }) =>
+      name.toLowerCase().includes(kelurahan),
+    );
+    setKec(getKecamatan?.name);
+  }
+
+  // Provinsi
+  const getProvinsi = ProvinsiData.find(
+    ({ name }) =>
+      name.toLowerCase().includes(provinsi.toLowerCase()) ||
+      provinsi.toLowerCase().includes(name.toLowerCase()),
+  );
+  if (!getProvinsi) return "";
+  const getProvinsiId = getProvinsi.id;
 
   // Kabupaten
   const filterKabupaten = KabupatenData.filter(
     ({ provinsi_id }) => provinsi_id === getProvinsiId,
   );
   const getKabupaten = filterKabupaten.find(({ name }) =>
-    name.toLowerCase().includes(kabupaten.toLowerCase()),
+    name.toLowerCase().includes(kabupaten),
   );
-  const getKabupatenId = getKabupaten?.id;
+  if (!getKabupaten) return "";
+  const getKabupatenId = getKabupaten.id;
 
   // Kecamatan
   const filterKecamatan = KecamatanData.filter(
     ({ kabupaten_id }) => kabupaten_id === getKabupatenId,
   );
   const getKecamatan = filterKecamatan.find(({ name }) =>
-    name.toLowerCase().includes(kecamatan.toLowerCase()),
+    name.toLowerCase().includes(kecamatan),
   );
-  const getKecamatanId = getKecamatan?.id;
+  if (!getKecamatan) return "";
+  const getKecamatanId = getKecamatan.id;
 
   // Kelurahan
   const filterKelurahan = KelurahanData.filter(
     ({ kecamatan_id }) => kecamatan_id === getKecamatanId,
   );
   const getKelurahan = filterKelurahan.find(({ name }) =>
-    name.toLowerCase().includes(kelurahan.toLowerCase()),
+    name.toLowerCase().includes(kelurahan),
   );
-  const getKelurahanId = getKelurahan?.id;
+  if (!getKelurahan) return "";
+  const getKelurahanId = getKelurahan.id;
 
   const convertToAdmCode = (id: number | undefined) => {
     if (!id) return "";

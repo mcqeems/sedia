@@ -43,6 +43,8 @@ export default function Location({
           address.locality ||
           "";
 
+        console.log();
+
         try {
           const code = getAdmCode({
             provinsi,
