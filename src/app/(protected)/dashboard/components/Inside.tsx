@@ -72,7 +72,7 @@ export default function Inside() {
   }
 
   return (
-    <section className="flex w-full flex-col gap-3 py-2">
+    <section className="flex w-full flex-col gap-2 py-2">
       <Location greeting={greeting} user={state.user} geo={state.geo} />
       <Tops />
       <Bottoms />

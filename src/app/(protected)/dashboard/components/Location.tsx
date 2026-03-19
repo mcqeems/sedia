@@ -59,7 +59,7 @@ export default function Location({
   }, [geo]);
 
   return (
-    <div className="flex w-full flex-col justify-between rounded-lg border border-border p-2 md:flex-row md:items-center">
+    <div className="flex w-full flex-col md:justify-between justify-center items-center rounded-lg border border-border p-2 md:flex-row">
       <div className="flex flex-row items-center gap-1">
         <p>
           {greeting}, {user?.user_metadata.first_name}!
