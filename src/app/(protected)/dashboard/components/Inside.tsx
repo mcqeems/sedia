@@ -2,8 +2,8 @@
 
 import { useEffect, useReducer } from "react";
 import Loader from "@/components/protected/Loader";
-import getGeoLocation from "@/lib/dashboard/getGeoLocation";
-import getGreeting from "@/lib/dashboard/getGreeting";
+import getGeoLocation from "@/lib/dashboard/location/getGeoLocation";
+import getGreeting from "@/lib/dashboard/location/getGreeting";
 import type { ExtendedUser } from "@/lib/supabase/getUser";
 import getUser from "@/lib/supabase/getUser";
 import Bottoms from "./Bottoms";

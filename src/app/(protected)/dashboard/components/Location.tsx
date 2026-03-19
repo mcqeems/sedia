@@ -2,8 +2,8 @@
 
 import { IconMapPin } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import getAdmCode from "@/lib/dashboard/getAdmCode";
-import reverseGeoLocation from "@/lib/dashboard/reverseGeoLocation";
+import getAdmCode from "@/lib/dashboard/location/getAdmCode";
+import reverseGeoLocation from "@/lib/dashboard/location/reverseGeoLocation";
 import type { ExtendedUser } from "@/lib/supabase/getUser";
 
 export default function Location({
@@ -29,29 +29,8 @@ export default function Location({
 
       if (data) {
         setDisplayName(data.display_name);
-
-        const { address } = data;
-        const provinsi = address.state || "";
-        const kabupaten =
-          address.county || address.city || address.city_district || "";
-        const kecamatan =
-          address.municipality || address.suburb || address.district || "";
-        const kelurahan =
-          address.village ||
-          address.hamlet ||
-          address.neighbourhood ||
-          address.locality ||
-          "";
-
-        console.log();
-
         try {
-          const code = getAdmCode({
-            provinsi,
-            kabupaten,
-            kecamatan,
-            kelurahan,
-          });
+          const code = await getAdmCode(data.display_name);
           setAdmCode(code);
         } catch (err) {
           console.error("Failed to get adm code", err);
