@@ -1,6 +1,11 @@
 "use client";
 
-import { IconMapPin } from "@tabler/icons-react";
+import {
+  IconCurrentLocation,
+  IconMapPin,
+  IconPencil,
+  IconViewfinder,
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import getAdmCode from "@/lib/dashboard/location/getAdmCode";
 import reverseGeoLocation from "@/lib/dashboard/location/reverseGeoLocation";
@@ -59,7 +64,7 @@ export default function Location({
   }, [geo]);
 
   return (
-    <div className="flex w-full flex-col md:justify-between justify-center items-center rounded-lg border border-border p-2 md:flex-row">
+    <div className="flex w-full flex-col md:justify-between justify-center items-center rounded-lg border border-border p-2 md:flex-row text-muted-foreground">
       <div className="flex flex-row items-center gap-1">
         <p>
           {greeting}, {user?.user_metadata.first_name}!
@@ -68,11 +73,27 @@ export default function Location({
       </div>
 
       <div className="flex flex-row items-center gap-2 mt-2 md:mt-0">
-        <span className="flex items-center justify-center shrink-0">
+        <span className="flex items-center justify-center shrink-0 ">
           <IconMapPin height={20} width={20} />
         </span>
         <div className="text-sm md:text-right">
           <p className="line-clamp-2 max-w-sm">{displayName}</p>
+        </div>
+        <div className="flex flex-row gap-1">
+          <button
+            className="h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all cursor-pointer border border-primary/50 text-primary/50 flex justify-center items-center"
+            type="button"
+            title="Get the newest location with your gps."
+          >
+            <IconCurrentLocation height={20} width={20} />
+          </button>
+          <button
+            className="h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all cursor-pointer border border-primary/50 text-primary/50 flex justify-center items-center"
+            type="button"
+            title="Change your location manually."
+          >
+            <IconPencil height={20} width={20} />
+          </button>
         </div>
       </div>
     </div>
