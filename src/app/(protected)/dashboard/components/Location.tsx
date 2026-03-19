@@ -4,7 +4,9 @@ import { IconMapPin } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import getAdmCode from "@/lib/dashboard/location/getAdmCode";
 import reverseGeoLocation from "@/lib/dashboard/location/reverseGeoLocation";
+import getProfile from "@/lib/supabase/getProfile";
 import type { ExtendedUser } from "@/lib/supabase/getUser";
+import updateProfile from "@/lib/supabase/updateProfile";
 
 export default function Location({
   greeting,
@@ -13,30 +15,43 @@ export default function Location({
 }: {
   greeting: string;
   user: ExtendedUser | null;
-  geo: { latitude: string; longitude: string } | null;
+  geo: { latitude: string | null; longitude: string | null } | null;
 }) {
   const [displayName, setDisplayName] = useState<string>("Loading location...");
-  const [admCode, setAdmCode] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!geo) return;
-
     const fetchLocationData = async () => {
-      const data = await reverseGeoLocation({
-        latitude: geo.latitude,
-        longitude: geo.longitude,
-      });
+      const profile = await getProfile();
 
-      if (data) {
-        setDisplayName(data.display_name);
-        try {
-          const code = await getAdmCode(data.display_name);
-          setAdmCode(code);
-        } catch (err) {
-          console.error("Failed to get adm code", err);
-        }
+      if (profile?.adm_4 && profile?.display_location) {
+        setDisplayName(profile.display_location);
       } else {
-        setDisplayName("Location unavailable");
+        if (!geo?.latitude || !geo?.longitude) {
+          setDisplayName("Location unavailable");
+          return;
+        }
+
+        const { latitude, longitude } = geo;
+
+        const data = await reverseGeoLocation({
+          latitude,
+          longitude,
+        });
+
+        if (data) {
+          setDisplayName(data.display_name);
+          try {
+            const code = await getAdmCode(data.display_name);
+            await updateProfile({
+              displayLocation: data.display_name,
+              adm4: code,
+            });
+          } catch (err) {
+            console.error("Failed to get adm code", err);
+          }
+        } else {
+          setDisplayName("Location unavailable");
+        }
       }
     };
 
@@ -58,9 +73,6 @@ export default function Location({
         </span>
         <div className="text-sm md:text-right">
           <p className="line-clamp-2 max-w-sm">{displayName}</p>
-          {admCode && (
-            <span className="text-xs text-zinc-500">Adm. Code: {admCode}</span>
-          )}
         </div>
       </div>
     </div>
