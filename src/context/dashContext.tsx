@@ -34,14 +34,49 @@ const defaultDash: DashboardStates = {
   status: "loading-all",
 };
 
-const DashContext = createContext<DashboardStates>(defaultDash);
+export type DashAction =
+  | { type: "SET_STATE"; payload: Partial<DashboardContents> }
+  | { type: "SET_STATUS"; payload: DashboardStates["status"] };
 
-export default function dashContext({
+interface DashContextType {
+  state: DashboardStates;
+  dispatch: React.Dispatch<DashAction>;
+}
+
+const DashContext = createContext<DashContextType | undefined>(undefined);
+
+function dashReducer(
+  state: DashboardStates,
+  action: DashAction,
+): DashboardStates {
+  switch (action.type) {
+    case "SET_STATE":
+      return { ...state, state: { ...state.state, ...action.payload } };
+    case "SET_STATUS":
+      return { ...state, status: action.payload };
+    default:
+      return state;
+  }
+}
+
+export default function DashProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  <DashContext value={defaultDash}>{children}</DashContext>;
+  const [state, dispatch] = useReducer(dashReducer, defaultDash);
+
+  return (
+    <DashContext.Provider value={{ state, dispatch }}>
+      {children}
+    </DashContext.Provider>
+  );
 }
 
-export const useDashContext = () => useContext(DashContext);
+export const useDashContext = () => {
+  const context = useContext(DashContext);
+  if (!context) {
+    throw new Error("useDashContext must be used within a DashProvider");
+  }
+  return context;
+};

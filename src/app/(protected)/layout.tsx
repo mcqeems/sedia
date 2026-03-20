@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import DashProvider from "@/context/dashContext";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function ProtectedLayout({
@@ -17,10 +18,10 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <>
+    <DashProvider>
       <header></header>
       <main>{children}</main>
       <footer></footer>
-    </>
+    </DashProvider>
   );
 }

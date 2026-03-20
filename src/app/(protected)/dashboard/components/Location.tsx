@@ -5,7 +5,8 @@ import {
   IconMapPin,
   IconPencil,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDashContext } from "@/context/dashContext";
 import getAdmCode from "@/lib/dashboard/location/getAdmCode";
 import reverseGeoLocation from "@/lib/dashboard/location/reverseGeoLocation";
 import getProfile from "@/lib/supabase/getProfile";
@@ -21,17 +22,23 @@ export default function Location({
   user: ExtendedUser | null;
   geo: { latitude: string | null; longitude: string | null } | null;
 }) {
-  const [displayName, setDisplayName] = useState<string>("Loading location...");
+  const dashContext = useDashContext();
 
   useEffect(() => {
     const fetchLocationData = async () => {
       const profile = await getProfile();
 
       if (profile?.adm_4 && profile?.display_location) {
-        setDisplayName(profile.display_location);
+        dashContext.dispatch({
+          type: "SET_STATE",
+          payload: { displayLocation: profile.display_location },
+        });
       } else {
         if (!geo?.latitude || !geo?.longitude) {
-          setDisplayName("Location unavailable");
+          dashContext.dispatch({
+            type: "SET_STATE",
+            payload: { displayLocation: "Location unavailable" },
+          });
           return;
         }
 
@@ -43,7 +50,10 @@ export default function Location({
         });
 
         if (data) {
-          setDisplayName(data.display_name);
+          dashContext.dispatch({
+            type: "SET_STATE",
+            payload: { displayLocation: profile.display_location },
+          });
           try {
             const code = await getAdmCode(data.display_name);
             await updateProfile({
@@ -56,13 +66,16 @@ export default function Location({
             console.error("Failed to get adm code", err);
           }
         } else {
-          setDisplayName("Location unavailable");
+          dashContext.dispatch({
+            type: "SET_STATE",
+            payload: { displayLocation: "Location unavailable" },
+          });
         }
       }
     };
 
     fetchLocationData();
-  }, [geo]);
+  }, [geo, dashContext]);
 
   return (
     <div className="flex w-full flex-col md:justify-between justify-center items-center rounded-lg border border-border p-2 md:flex-row text-muted-foreground">
@@ -78,7 +91,9 @@ export default function Location({
           <IconMapPin height={20} width={20} />
         </span>
         <div className="text-sm md:text-right">
-          <p className="line-clamp-2 max-w-sm">{displayName}</p>
+          <p className="line-clamp-2 max-w-sm">
+            {dashContext.state.state.displayLocation}
+          </p>
         </div>
         <div className="flex flex-row gap-1">
           <button
