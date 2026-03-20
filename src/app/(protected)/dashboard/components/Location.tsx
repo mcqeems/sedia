@@ -4,7 +4,6 @@ import {
   IconCurrentLocation,
   IconMapPin,
   IconPencil,
-  IconViewfinder,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import getAdmCode from "@/lib/dashboard/location/getAdmCode";
@@ -49,6 +48,8 @@ export default function Location({
             const code = await getAdmCode(data.display_name);
             await updateProfile({
               displayLocation: data.display_name,
+              langitude: latitude,
+              longitude: longitude,
               adm4: code,
             });
           } catch (err) {
