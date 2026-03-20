@@ -26,7 +26,7 @@ interface DashboardStates {
 
 const defaultDash: DashboardStates = {
   state: {
-    displayLocation: undefined,
+    displayLocation: "Loading location...",
     adm4: undefined,
     latitude: undefined,
     longitude: undefined,

@@ -50,10 +50,6 @@ export default function Location({
         });
 
         if (data) {
-          dashContext.dispatch({
-            type: "SET_STATE",
-            payload: { displayLocation: profile.display_location },
-          });
           try {
             const code = await getAdmCode(data.display_name);
             await updateProfile({
@@ -61,6 +57,10 @@ export default function Location({
               langitude: latitude,
               longitude: longitude,
               adm4: code,
+            });
+            dashContext.dispatch({
+              type: "SET_STATE",
+              payload: { displayLocation: profile.display_location },
             });
           } catch (err) {
             console.error("Failed to get adm code", err);
@@ -76,6 +76,53 @@ export default function Location({
 
     fetchLocationData();
   }, [geo, dashContext]);
+
+  async function handleUpdateLocation() {
+    dashContext.dispatch({
+      type: "SET_STATE",
+      payload: { displayLocation: "Updating location..." },
+    });
+
+    const profile = await getProfile();
+
+    if (!geo?.latitude || !geo?.longitude) {
+      dashContext.dispatch({
+        type: "SET_STATE",
+        payload: { displayLocation: "Location unavailable" },
+      });
+      return;
+    }
+
+    const { latitude, longitude } = geo;
+
+    const data = await reverseGeoLocation({
+      latitude,
+      longitude,
+    });
+
+    if (data) {
+      try {
+        const code = await getAdmCode(data.display_name);
+        await updateProfile({
+          displayLocation: data.display_name,
+          langitude: latitude,
+          longitude: longitude,
+          adm4: code,
+        });
+        dashContext.dispatch({
+          type: "SET_STATE",
+          payload: { displayLocation: profile.display_location },
+        });
+      } catch (err) {
+        console.error("Failed to get adm code", err);
+      }
+    } else {
+      dashContext.dispatch({
+        type: "SET_STATE",
+        payload: { displayLocation: "Location unavailable" },
+      });
+    }
+  }
 
   return (
     <div className="flex w-full flex-col md:justify-between justify-center items-center rounded-lg border border-border p-2 md:flex-row text-muted-foreground">
@@ -100,6 +147,7 @@ export default function Location({
             className="h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all cursor-pointer border border-primary/50 text-primary/50 flex justify-center items-center"
             type="button"
             title="Get the newest location with your gps."
+            onClick={handleUpdateLocation}
           >
             <IconCurrentLocation height={20} width={20} />
           </button>
