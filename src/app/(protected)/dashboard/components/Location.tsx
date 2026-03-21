@@ -13,6 +13,92 @@ import getProfile from "@/lib/supabase/getProfile";
 import type { ExtendedUser } from "@/lib/supabase/getUser";
 import updateProfile from "@/lib/supabase/updateProfile";
 
+type Region = { code: string; name: string };
+
+function AutocompleteInput({
+  id,
+  label,
+  value,
+  onChange,
+  onSelect,
+  onFocus,
+  onBlur,
+  disabled = false,
+  placeholder,
+  isOpen,
+  isLoading,
+  items,
+  emptyMessage,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  onSelect: (item: Region) => void;
+  onFocus: () => void;
+  onBlur: () => void;
+  disabled?: boolean;
+  placeholder: string;
+  isOpen: boolean;
+  isLoading: boolean;
+  items: Region[];
+  emptyMessage: string;
+}) {
+  return (
+    <div className="relative flex flex-col gap-2 group">
+      <label
+        htmlFor={id}
+        className={`text-sm font-medium ${disabled ? "text-muted-foreground" : ""}`}
+      >
+        {label}
+      </label>
+      <input
+        id={id}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        autoComplete="off"
+        disabled={disabled}
+        placeholder={placeholder}
+        className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/50"
+      />
+      {/* Dropdown Selection */}
+      <div
+        className={`absolute top-full left-0 right-0 z-20 mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-background shadow-md ${
+          isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        } transition-all duration-200`}
+      >
+        <ul className="flex flex-col py-1 text-sm">
+          {isLoading ? (
+            <li className="px-3 py-2 text-muted-foreground italic text-xs">
+              Memuat data...
+            </li>
+          ) : items.length === 0 ? (
+            <li className="px-3 py-2 text-muted-foreground italic text-xs">
+              {emptyMessage}
+            </li>
+          ) : (
+            items.map((item) => (
+              <li
+                key={item.code}
+                className="px-3 py-2 hover:bg-muted cursor-pointer transition-colors"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onSelect(item);
+                }}
+              >
+                {item.name}
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 export default function Location({
   greeting,
   user,
@@ -265,125 +351,54 @@ export default function Location({
               </button>
             </div>
 
-            <div className="relative flex flex-col gap-2 group">
-              <label htmlFor="provinsi" className="text-sm font-medium">
-                Masukkan Provinsi:
-              </label>
-              <input
-                id="provinsi"
-                type="text"
-                value={inputProvinsi}
-                onChange={(e) => {
-                  setInputProvinsi(e.target.value);
-                  if (e.target.value === "") setSelectedProvinsi(null);
-                }}
-                onFocus={() => {
-                  setOpenDropdownProvincies(true);
-                }}
-                onBlur={() => {
-                  setOpenDropdownProvincies(false);
-                }}
-                autoComplete="off"
-                placeholder="Cari provinsi..."
-                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              {/* Dropdown Selection */}
-              <div
-                className={`absolute top-full left-0 right-0 z-20 mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-background shadow-md ${openDropdownProvincies ? "group-focus-within:opacity-100 group-focus-within:visible" : "opacity-0 invisible"}  transition-all duration-200`}
-              >
-                <ul className="flex flex-col py-1 text-sm">
-                  {isLoadingProvinces ? (
-                    <li className="px-3 py-2 text-muted-foreground italic text-xs">
-                      Memuat data...
-                    </li>
-                  ) : filteredProvinces.length === 0 ? (
-                    <li className="px-3 py-2 text-muted-foreground italic text-xs">
-                      Provinsi tidak ditemukan...
-                    </li>
-                  ) : (
-                    filteredProvinces.map((prov) => (
-                      <li
-                        key={prov.code}
-                        className="px-3 py-2 hover:bg-muted cursor-pointer transition-colors"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          setSelectedProvinsi(prov);
-                          setInputProvinsi(prov.name);
-                          setOpenDropdownProvincies(false);
-                        }}
-                      >
-                        {prov.name}
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </div>
-            </div>
+            <AutocompleteInput
+              id="provinsi"
+              label="Masukkan Provinsi:"
+              value={inputProvinsi}
+              onChange={(val) => {
+                setInputProvinsi(val);
+                if (val === "") setSelectedProvinsi(null);
+              }}
+              onSelect={(prov) => {
+                setSelectedProvinsi(prov);
+                setInputProvinsi(prov.name);
+                setOpenDropdownProvincies(false);
+              }}
+              onFocus={() => setOpenDropdownProvincies(true)}
+              onBlur={() => setOpenDropdownProvincies(false)}
+              placeholder="Cari provinsi..."
+              isOpen={openDropdownProvincies}
+              isLoading={isLoadingProvinces}
+              items={filteredProvinces}
+              emptyMessage="Provinsi tidak ditemukan..."
+            />
 
-            <div className="relative flex flex-col gap-2 group">
-              <label
-                htmlFor="kabupaten"
-                className={`text-sm font-medium ${!selectedProvinsi ? "text-muted-foreground" : ""}`}
-              >
-                Masukkan Kota/Kabupaten:
-              </label>
-              <input
-                id="kabupaten"
-                type="text"
-                value={inputKabupaten}
-                autoComplete="off"
-                onFocus={() => {
-                  setOpenDropdownRegencies(true);
-                }}
-                onBlur={() => {
-                  setOpenDropdownRegencies(false);
-                }}
-                onChange={(e) => {
-                  setInputKabupaten(e.target.value);
-                  if (e.target.value === "") setSelectedKabupaten(null);
-                }}
-                disabled={!selectedProvinsi}
-                placeholder={
-                  selectedProvinsi
-                    ? "Cari kota/kabupaten..."
-                    : "Pilih provinsi terlebih dahulu"
-                }
-                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/50"
-              />
-              {/* Dropdown Selection */}
-              {selectedProvinsi && (
-                <div
-                  className={`absolute top-full left-0 right-0 z-20 mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-background shadow-md ${openDropdownRegencies ? "group-focus-within:opacity-100 group-focus-within:visible" : "opacity-0 invisible"}  transition-all duration-200`}
-                >
-                  <ul className="flex flex-col py-1 text-sm">
-                    {isLoadingRegencies ? (
-                      <li className="px-3 py-2 text-muted-foreground italic text-xs">
-                        Memuat data...
-                      </li>
-                    ) : filteredRegencies.length === 0 ? (
-                      <li className="px-3 py-2 text-muted-foreground italic text-xs">
-                        Kota/Kabupaten tidak ditemukan...
-                      </li>
-                    ) : (
-                      filteredRegencies.map((reg) => (
-                        <li
-                          key={reg.code}
-                          className="px-3 py-2 hover:bg-muted cursor-pointer transition-colors"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            setSelectedKabupaten(reg);
-                            setInputKabupaten(reg.name);
-                            setOpenDropdownRegencies(false);
-                          }}
-                        >
-                          {reg.name}
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                </div>
-              )}
-            </div>
+            <AutocompleteInput
+              id="kabupaten"
+              label="Masukkan Kota/Kabupaten:"
+              value={inputKabupaten}
+              onChange={(val) => {
+                setInputKabupaten(val);
+                if (val === "") setSelectedKabupaten(null);
+              }}
+              onSelect={(reg) => {
+                setSelectedKabupaten(reg);
+                setInputKabupaten(reg.name);
+                setOpenDropdownRegencies(false);
+              }}
+              onFocus={() => setOpenDropdownRegencies(true)}
+              onBlur={() => setOpenDropdownRegencies(false)}
+              disabled={!selectedProvinsi}
+              placeholder={
+                selectedProvinsi
+                  ? "Cari kota/kabupaten..."
+                  : "Pilih provinsi terlebih dahulu"
+              }
+              isOpen={openDropdownRegencies && !!selectedProvinsi}
+              isLoading={isLoadingRegencies}
+              items={filteredRegencies}
+              emptyMessage="Kota/Kabupaten tidak ditemukan..."
+            />
 
             <div className="mt-4 flex justify-end">
               <button
