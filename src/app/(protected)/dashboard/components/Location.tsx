@@ -322,9 +322,9 @@ export default function Location({
         setInputProvinsi("");
         setInputKabupaten("");
       } else {
-        // Did not return lat/lon
+        // Did not return lat/lon (City doesn't exist on OpenWeather API)
         setErrorMsg(
-          "Koordinat lokasi tidak ditemukan. Untuk hasil yang lebih akurat, sangat disarankan untuk mengaktifkan akses lokasi GPS pada browser Anda.",
+          "Mohon maaf lokasi ini belum tersedia, kami menyarankan untuk mengaktifkan lokasi anda agar lebih akurat. Dan anda bisa memilih lokasi lain disini apabila tidak bisa mengaktifkan lokasi anda.",
         );
       }
     } catch (err) {
@@ -492,7 +492,7 @@ export default function Location({
             className="h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all cursor-pointer border border-primary/50 text-primary/50 flex justify-center items-center"
             type="button"
             title="Get the newest location with your gps."
-            onClick={handleUpdateLocation}
+            onClick={handleRequestGPSLocation}
           >
             <IconCurrentLocation height={20} width={20} />
           </button>
@@ -565,6 +565,18 @@ export default function Location({
                 </button>
               )}
             </div>
+
+            {/* Permanent Warning to encourage geolocation */}
+            {!errorMsg && (
+              <div className="bg-primary/10 text-primary p-3 rounded-md text-sm mb-2 flex items-start gap-2 border border-primary/20">
+                <IconCurrentLocation className="shrink-0 mt-0.5" size={16} />
+                <p>
+                  Mengisi lokasi secara manual kurang direkomendasikan. Mohon
+                  aktifkan akses lokasi perangkat Anda untuk informasi
+                  terakurat.
+                </p>
+              </div>
+            )}
 
             {errorMsg && (
               <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm mb-2 flex flex-col gap-2">
