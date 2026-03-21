@@ -150,6 +150,7 @@ export default function Location({
   const [isLoadingRegencies, setIsLoadingRegencies] = useState(false);
   const [openDropdownProvincies, setOpenDropdownProvincies] = useState(false);
   const [openDropdownRegencies, setOpenDropdownRegencies] = useState(false);
+  const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const { dispatch, state } = useDashContext();
 
@@ -247,6 +248,70 @@ export default function Location({
 
     fetchLocationData();
   }, [geo, dispatch]);
+
+  async function handleSaveChangeLocation() {
+    if (!selectedKabupaten || !selectedProvinsi) return;
+
+    interface Geo {
+      name: string;
+      lat: number;
+      lon: number;
+      country: string;
+      state: string;
+    }
+
+    try {
+      const getGeo = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${selectedKabupaten.name},${selectedProvinsi.name},ID&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY}`,
+      );
+
+      if (!getGeo.ok) {
+        throw new Error(`Geocoding failed: ${getGeo.statusText}`);
+      }
+
+      const geoData: Geo[] = await getGeo.json();
+
+      if (geoData && geoData.length > 0) {
+        dispatch({
+          type: "SET_STATE",
+          payload: {
+            latitude: geoData[0].lat.toString(),
+            longitude: geoData[0].lon.toString(),
+          },
+        });
+
+        const getDisplayLocation = await reverseGeoLocation({
+          latitude: geoData[0].lat.toString(),
+          longitude: geoData[0].lon.toString(),
+        });
+
+        const getAdm = await getAdmCode(getDisplayLocation?.display_name);
+
+        dispatch({
+          type: "SET_STATE",
+          payload: {
+            displayLocation: getDisplayLocation?.display_name,
+            latitude: geoData[0].lat.toString(),
+            longitude: geoData[0].lon.toString(),
+            adm4: getAdm,
+          },
+        });
+
+        await updateProfile({
+          displayLocation: state.state.displayLocation,
+          langitude: state.state.latitude,
+          longitude: state.state.longitude,
+          adm4: state.state.adm4,
+        });
+      } else {
+        console.error("No coordinates found for the selected location.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    handleOpenChangeLocation();
+  }
 
   async function handleUpdateLocation() {
     dispatch({
@@ -431,9 +496,10 @@ export default function Location({
             <div className="mt-4 flex justify-end">
               <button
                 type="button"
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
+                onClick={handleSaveChangeLocation}
+                className={`px-4 py-2 ${isLoadingSave ? "bg-muted-foreground/50" : "bg-primary"} text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium`}
               >
-                Simpan
+                {isLoadingSave ? "Menyimpan..." : "Simpan"}
               </button>
             </div>
           </div>

@@ -28,8 +28,8 @@ export default async function reverseGeoLocation({
   latitude,
   longitude,
 }: {
-  latitude: string;
-  longitude: string;
+  latitude: string | undefined;
+  longitude: string | undefined;
 }) {
   try {
     const response = await fetch(
