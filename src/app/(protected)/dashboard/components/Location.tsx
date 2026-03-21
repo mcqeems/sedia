@@ -236,7 +236,7 @@ export default function Location({
             });
             dispatch({
               type: "SET_STATE",
-              payload: { displayLocation: profile.display_location },
+              payload: { displayLocation: data.display_name },
             });
           } catch (err) {
             console.error("Failed to get adm code", err);
