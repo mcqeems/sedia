@@ -151,6 +151,9 @@ export default function Location({
   const [openDropdownProvincies, setOpenDropdownProvincies] = useState(false);
   const [openDropdownRegencies, setOpenDropdownRegencies] = useState(false);
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [showMissingGeoPopup, setShowMissingGeoPopup] = useState(false);
+  const [forceManual, setForceManual] = useState(false);
 
   const { dispatch, state } = useDashContext();
 
@@ -211,6 +214,7 @@ export default function Location({
             type: "SET_STATE",
             payload: { displayLocation: "Location unavailable" },
           });
+          setShowMissingGeoPopup(true);
           return;
         }
 
@@ -251,6 +255,8 @@ export default function Location({
 
   async function handleSaveChangeLocation() {
     if (!selectedKabupaten || !selectedProvinsi) return;
+    setIsLoadingSave(true);
+    setErrorMsg("");
 
     interface Geo {
       name: string;
@@ -261,8 +267,13 @@ export default function Location({
     }
 
     try {
+      // Clean up "Kota" and "Kabupaten" prefixes (case-insensitive) for better geocoding results
+      const cleanKabupatenName = selectedKabupaten.name
+        .replace(/^(kota\s+|kabupaten\s+)/i, "")
+        .trim();
+
       const getGeo = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${selectedKabupaten.name},${selectedProvinsi.name},ID&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY}`,
+        `https://api.openweathermap.org/geo/1.0/direct?q=${cleanKabupatenName},${selectedProvinsi.name},ID&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY}`,
       );
 
       if (!getGeo.ok) {
@@ -298,22 +309,97 @@ export default function Location({
         });
 
         await updateProfile({
-          displayLocation: state.state.displayLocation,
-          langitude: state.state.latitude,
-          longitude: state.state.longitude,
-          adm4: state.state.adm4,
+          displayLocation: getDisplayLocation?.display_name,
+          langitude: geoData[0].lat.toString(),
+          longitude: geoData[0].lon.toString(),
+          adm4: getAdm,
         });
+
+        setForceManual(false);
+        setOpenChangeLocation(false);
+        setSelectedProvinsi(null);
+        setSelectedKabupaten(null);
+        setInputProvinsi("");
+        setInputKabupaten("");
       } else {
-        console.error("No coordinates found for the selected location.");
+        // Did not return lat/lon
+        setErrorMsg(
+          "Koordinat lokasi tidak ditemukan. Untuk hasil yang lebih akurat, sangat disarankan untuk mengaktifkan akses lokasi GPS pada browser Anda.",
+        );
       }
     } catch (err) {
       console.error(err);
+      setErrorMsg("Terjadi kesalahan saat mencari lokasi. Silakan coba lagi.");
+    } finally {
+      setIsLoadingSave(false);
     }
-
-    handleOpenChangeLocation();
   }
 
-  async function handleUpdateLocation() {
+  function handleVerifyGeolocation() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const newGeo = {
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString(),
+          };
+
+          handleUpdateLocationWithCoords(newGeo.latitude, newGeo.longitude);
+          setShowMissingGeoPopup(false);
+          setForceManual(false);
+        },
+        (error) => {
+          console.error("GPS Error:", error);
+          setShowMissingGeoPopup(false);
+          setForceManual(true);
+          setOpenChangeLocation(true);
+          setErrorMsg(
+            "Gagal mendapatkan lokasi otomatis. Silakan atur lokasi secara manual.",
+          );
+        },
+        { timeout: 10000 },
+      );
+    } else {
+      setShowMissingGeoPopup(false);
+      setForceManual(true);
+      setOpenChangeLocation(true);
+      setErrorMsg(
+        "Browser Anda tidak mendukung GPS. Silakan atur lokasi secara manual.",
+      );
+    }
+  }
+
+  function handleRequestGPSLocation() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Triggers Native Fetch flow that naturally updates context & Supabase
+          const newGeo = {
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString(),
+          };
+
+          handleUpdateLocationWithCoords(newGeo.latitude, newGeo.longitude);
+          setForceManual(false);
+          setOpenChangeLocation(false);
+        },
+        (error) => {
+          console.error("GPS Error:", error);
+          if (error.code === error.PERMISSION_DENIED) {
+            setErrorMsg(
+              "Mohon izinkan akses lokasi pada browser/perangkat Anda terlebih dahulu untuk menggunakan fitur ini.",
+            );
+          } else {
+            setErrorMsg("Gagal mendapatkan lokasi. Pastikan GPS aktif.");
+          }
+        },
+      );
+    } else {
+      setErrorMsg("Browser Anda tidak mendukung fitur Geolocation GPS.");
+    }
+  }
+
+  async function handleUpdateLocationWithCoords(lat: string, lon: string) {
     dispatch({
       type: "SET_STATE",
       payload: { displayLocation: "Updating location..." },
@@ -321,19 +407,9 @@ export default function Location({
 
     const profile = await getProfile();
 
-    if (!geo?.latitude || !geo?.longitude) {
-      dispatch({
-        type: "SET_STATE",
-        payload: { displayLocation: "Location unavailable" },
-      });
-      return;
-    }
-
-    const { latitude, longitude } = geo;
-
     const data = await reverseGeoLocation({
-      latitude,
-      longitude,
+      latitude: lat,
+      longitude: lon,
     });
 
     if (data) {
@@ -341,13 +417,15 @@ export default function Location({
         const code = await getAdmCode(data.display_name);
         await updateProfile({
           displayLocation: data.display_name,
-          langitude: latitude,
-          longitude: longitude,
+          langitude: lat,
+          longitude: lon,
           adm4: code,
         });
         dispatch({
           type: "SET_STATE",
-          payload: { displayLocation: profile.display_location },
+          payload: {
+            displayLocation: profile.display_location || data.display_name,
+          },
         });
       } catch (err) {
         console.error("Failed to get adm code", err);
@@ -360,8 +438,21 @@ export default function Location({
     }
   }
 
+  async function handleUpdateLocation() {
+    if (geo?.latitude && geo?.longitude) {
+      handleUpdateLocationWithCoords(geo.latitude, geo.longitude);
+    } else {
+      dispatch({
+        type: "SET_STATE",
+        payload: { displayLocation: "Location unavailable" },
+      });
+    }
+  }
+
   function handleOpenChangeLocation() {
+    if (forceManual) return;
     if (!openChangeLocation) {
+      setErrorMsg(""); // Clear errors on fresh open
       setOpenChangeLocation(true);
     } else {
       setOpenChangeLocation(false);
@@ -416,25 +507,77 @@ export default function Location({
         </div>
       </div>
 
+      {showMissingGeoPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+          <div className="relative w-full max-w-sm bg-background rounded-2xl shadow-2xl border border-border p-6 flex flex-col gap-4 z-10 text-center items-center">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mt-2">
+              <IconCurrentLocation size={24} />
+            </div>
+            <h3 className="text-lg font-semibold">Akses Lokasi Dibutuhkan</h3>
+            <p className="text-sm text-muted-foreground">
+              Untuk memberikan informasi yang lebih akurat, silahkan aktifkan
+              akses lokasi pada browser/perangkat Anda.
+            </p>
+            <div className="flex flex-col gap-2 w-full mt-2">
+              <button
+                type="button"
+                onClick={handleVerifyGeolocation}
+                className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
+              >
+                Saya sudah mengaktifkan lokasi
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMissingGeoPopup(false);
+                  setForceManual(true);
+                  setErrorMsg("");
+                  setOpenChangeLocation(true);
+                }}
+                className="w-full px-4 py-2 bg-transparent text-primary border border-primary/20 rounded-lg hover:bg-primary/5 transition-colors text-sm font-medium"
+              >
+                Atur lokasi manual
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {openChangeLocation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/** biome-ignore lint/a11y/noStaticElementInteractions: why not */}
           {/** biome-ignore lint/a11y/useKeyWithClickEvents: why not */}
           <div
             className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-            onClick={handleOpenChangeLocation}
+            onClick={() => !forceManual && handleOpenChangeLocation()}
           ></div>
           <div className="relative w-full max-w-lg bg-background rounded-2xl shadow-2xl border border-border p-6 flex flex-col gap-4 z-10">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-lg font-semibold">Ubah Lokasi</h3>
-              <button
-                type="button"
-                onClick={handleOpenChangeLocation}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                ✕
-              </button>
+              {!forceManual && (
+                <button
+                  type="button"
+                  onClick={handleOpenChangeLocation}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  ✕
+                </button>
+              )}
             </div>
+
+            {errorMsg && (
+              <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm mb-2 flex flex-col gap-2">
+                <p>{errorMsg}</p>
+                <button
+                  type="button"
+                  onClick={handleRequestGPSLocation}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 px-3 py-1.5 rounded-md text-xs font-semibold w-fit flex items-center gap-1"
+                >
+                  <IconCurrentLocation size={14} /> Gunakan GPS Sekarang
+                </button>
+              </div>
+            )}
 
             <AutocompleteInput
               id="provinsi"
