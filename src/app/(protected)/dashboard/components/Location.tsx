@@ -579,12 +579,12 @@ export default function Location({
             )}
 
             {errorMsg && (
-              <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm mb-2 flex flex-col gap-2">
+              <div className="bg-red-200 text-foreground p-3 border border-red-300 rounded-md text-sm mb-2 flex flex-col gap-2">
                 <p>{errorMsg}</p>
                 <button
                   type="button"
                   onClick={handleRequestGPSLocation}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 px-3 py-1.5 rounded-md text-xs font-semibold w-fit flex items-center gap-1"
+                  className="bg-red-400 text-background hover:bg-red-500 px-3 py-1.5 rounded-md text-xs font-semibold w-fit flex items-center gap-1 transition-colors"
                 >
                   <IconCurrentLocation size={14} /> Gunakan GPS Sekarang
                 </button>
