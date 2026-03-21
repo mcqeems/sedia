@@ -23,6 +23,7 @@ function AutocompleteInput({
   onSelect,
   onFocus,
   onBlur,
+  reset,
   disabled = false,
   placeholder,
   isOpen,
@@ -37,6 +38,7 @@ function AutocompleteInput({
   onSelect: (item: Region) => void;
   onFocus: () => void;
   onBlur: () => void;
+  reset: () => void;
   disabled?: boolean;
   placeholder: string;
   isOpen: boolean;
@@ -52,18 +54,36 @@ function AutocompleteInput({
       >
         {label}
       </label>
-      <input
-        id={id}
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        autoComplete="off"
-        disabled={disabled}
-        placeholder={placeholder}
-        className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/50"
-      />
+      <div>
+        <div className="relative w-full">
+          <input
+            id={id}
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            autoComplete="off"
+            disabled={disabled}
+            placeholder={placeholder}
+            className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/50 pr-8"
+          />
+          {value && !disabled && (
+            <button
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                reset();
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded-sm focus:outline-none"
+              aria-label="Clear input"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Dropdown Selection */}
       <div
         className={`absolute top-full left-0 right-0 z-20 mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-background shadow-md ${
@@ -366,6 +386,10 @@ export default function Location({
               }}
               onFocus={() => setOpenDropdownProvincies(true)}
               onBlur={() => setOpenDropdownProvincies(false)}
+              reset={() => {
+                setInputProvinsi("");
+                setSelectedProvinsi(null);
+              }}
               placeholder="Cari provinsi..."
               isOpen={openDropdownProvincies}
               isLoading={isLoadingProvinces}
@@ -388,6 +412,10 @@ export default function Location({
               }}
               onFocus={() => setOpenDropdownRegencies(true)}
               onBlur={() => setOpenDropdownRegencies(false)}
+              reset={() => {
+                setInputKabupaten("");
+                setSelectedKabupaten(null);
+              }}
               disabled={!selectedProvinsi}
               placeholder={
                 selectedProvinsi
