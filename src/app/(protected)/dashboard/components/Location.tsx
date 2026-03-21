@@ -5,7 +5,7 @@ import {
   IconMapPin,
   IconPencil,
 } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDashContext } from "@/context/dashContext";
 import getAdmCode from "@/lib/dashboard/location/getAdmCode";
 import reverseGeoLocation from "@/lib/dashboard/location/reverseGeoLocation";
@@ -22,20 +22,85 @@ export default function Location({
   user: ExtendedUser | null;
   geo: { latitude: string | null; longitude: string | null } | null;
 }) {
-  const dashContext = useDashContext();
+  const [openChangeLocation, setOpenChangeLocation] = useState(false);
+  const [selectedProvinsi, setSelectedProvinsi] = useState<{
+    code: string;
+    name: string;
+  } | null>(null);
+  const [inputProvinsi, setInputProvinsi] = useState("");
+  const [selectedKabupaten, setSelectedKabupaten] = useState<{
+    code: string;
+    name: string;
+  } | null>(null);
+  const [inputKabupaten, setInputKabupaten] = useState("");
+
+  const [provinces, setProvinces] = useState<{ code: string; name: string }[]>(
+    [],
+  );
+  const [regencies, setRegencies] = useState<{ code: string; name: string }[]>(
+    [],
+  );
+  const [isLoadingProvinces, setIsLoadingProvinces] = useState(false);
+  const [isLoadingRegencies, setIsLoadingRegencies] = useState(false);
+  const [openDropdownProvincies, setOpenDropdownProvincies] = useState(false);
+  const [openDropdownRegencies, setOpenDropdownRegencies] = useState(false);
+
+  const { dispatch, state } = useDashContext();
+
+  useEffect(() => {
+    if (openChangeLocation && provinces.length === 0) {
+      const fetchProvinces = async () => {
+        setIsLoadingProvinces(true);
+        try {
+          const res = await fetch("/api/wilayah/provinces.json");
+          const json = await res.json();
+          setProvinces(json.data || []);
+        } catch (err) {
+          console.error("Failed to fetch provinces", err);
+        } finally {
+          setIsLoadingProvinces(false);
+        }
+      };
+      fetchProvinces();
+    }
+  }, [openChangeLocation, provinces.length]);
+
+  useEffect(() => {
+    if (selectedProvinsi?.code) {
+      const fetchRegencies = async () => {
+        setIsLoadingRegencies(true);
+        try {
+          const res = await fetch(
+            `/api/wilayah/regencies/${selectedProvinsi.code}.json`,
+          );
+          const json = await res.json();
+          setRegencies(json.data || []);
+        } catch (err) {
+          console.error("Failed to fetch regencies", err);
+        } finally {
+          setIsLoadingRegencies(false);
+        }
+      };
+      fetchRegencies();
+    } else {
+      setRegencies([]);
+      setSelectedKabupaten(null);
+      setInputKabupaten("");
+    }
+  }, [selectedProvinsi]);
 
   useEffect(() => {
     const fetchLocationData = async () => {
       const profile = await getProfile();
 
       if (profile?.adm_4 && profile?.display_location) {
-        dashContext.dispatch({
+        dispatch({
           type: "SET_STATE",
           payload: { displayLocation: profile.display_location },
         });
       } else {
         if (!geo?.latitude || !geo?.longitude) {
-          dashContext.dispatch({
+          dispatch({
             type: "SET_STATE",
             payload: { displayLocation: "Location unavailable" },
           });
@@ -58,7 +123,7 @@ export default function Location({
               longitude: longitude,
               adm4: code,
             });
-            dashContext.dispatch({
+            dispatch({
               type: "SET_STATE",
               payload: { displayLocation: profile.display_location },
             });
@@ -66,7 +131,7 @@ export default function Location({
             console.error("Failed to get adm code", err);
           }
         } else {
-          dashContext.dispatch({
+          dispatch({
             type: "SET_STATE",
             payload: { displayLocation: "Location unavailable" },
           });
@@ -75,10 +140,10 @@ export default function Location({
     };
 
     fetchLocationData();
-  }, [geo, dashContext]);
+  }, [geo, dispatch]);
 
   async function handleUpdateLocation() {
-    dashContext.dispatch({
+    dispatch({
       type: "SET_STATE",
       payload: { displayLocation: "Updating location..." },
     });
@@ -86,7 +151,7 @@ export default function Location({
     const profile = await getProfile();
 
     if (!geo?.latitude || !geo?.longitude) {
-      dashContext.dispatch({
+      dispatch({
         type: "SET_STATE",
         payload: { displayLocation: "Location unavailable" },
       });
@@ -109,7 +174,7 @@ export default function Location({
           longitude: longitude,
           adm4: code,
         });
-        dashContext.dispatch({
+        dispatch({
           type: "SET_STATE",
           payload: { displayLocation: profile.display_location },
         });
@@ -117,12 +182,32 @@ export default function Location({
         console.error("Failed to get adm code", err);
       }
     } else {
-      dashContext.dispatch({
+      dispatch({
         type: "SET_STATE",
         payload: { displayLocation: "Location unavailable" },
       });
     }
   }
+
+  function handleOpenChangeLocation() {
+    if (!openChangeLocation) {
+      setOpenChangeLocation(true);
+    } else {
+      setOpenChangeLocation(false);
+      setSelectedProvinsi(null);
+      setSelectedKabupaten(null);
+      setInputProvinsi("");
+      setInputKabupaten("");
+    }
+  }
+
+  const filteredProvinces = provinces.filter((p) =>
+    p.name.toLowerCase().includes(inputProvinsi.toLowerCase()),
+  );
+
+  const filteredRegencies = regencies.filter((r) =>
+    r.name.toLowerCase().includes(inputKabupaten.toLowerCase()),
+  );
 
   return (
     <div className="flex w-full flex-col md:justify-between justify-center items-center rounded-lg border border-border p-2 md:flex-row text-muted-foreground">
@@ -138,9 +223,7 @@ export default function Location({
           <IconMapPin height={20} width={20} />
         </span>
         <div className="text-sm md:text-right">
-          <p className="line-clamp-2 max-w-sm">
-            {dashContext.state.state.displayLocation}
-          </p>
+          <p className="line-clamp-2 max-w-sm">{state.state.displayLocation}</p>
         </div>
         <div className="flex flex-row gap-1">
           <button
@@ -155,11 +238,164 @@ export default function Location({
             className="h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all cursor-pointer border border-primary/50 text-primary/50 flex justify-center items-center"
             type="button"
             title="Change your location manually."
+            onClick={handleOpenChangeLocation}
           >
             <IconPencil height={20} width={20} />
           </button>
         </div>
       </div>
+
+      {openChangeLocation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/** biome-ignore lint/a11y/noStaticElementInteractions: why not */}
+          {/** biome-ignore lint/a11y/useKeyWithClickEvents: why not */}
+          <div
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+            onClick={handleOpenChangeLocation}
+          ></div>
+          <div className="relative w-full max-w-lg bg-background rounded-2xl shadow-2xl border border-border p-6 flex flex-col gap-4 z-10">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-lg font-semibold">Ubah Lokasi</h3>
+              <button
+                type="button"
+                onClick={handleOpenChangeLocation}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="relative flex flex-col gap-2 group">
+              <label htmlFor="provinsi" className="text-sm font-medium">
+                Masukkan Provinsi:
+              </label>
+              <input
+                id="provinsi"
+                type="text"
+                value={inputProvinsi}
+                onChange={(e) => {
+                  setInputProvinsi(e.target.value);
+                  if (e.target.value === "") setSelectedProvinsi(null);
+                }}
+                onFocus={() => {
+                  setOpenDropdownProvincies(true);
+                }}
+                onBlur={() => {
+                  setOpenDropdownProvincies(false);
+                }}
+                autoComplete="off"
+                placeholder="Cari provinsi..."
+                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              {/* Dropdown Selection */}
+              <div
+                className={`absolute top-full left-0 right-0 z-20 mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-background shadow-md ${openDropdownProvincies ? "group-focus-within:opacity-100 group-focus-within:visible" : "opacity-0 invisible"}  transition-all duration-200`}
+              >
+                <ul className="flex flex-col py-1 text-sm">
+                  {isLoadingProvinces ? (
+                    <li className="px-3 py-2 text-muted-foreground italic text-xs">
+                      Memuat data...
+                    </li>
+                  ) : filteredProvinces.length === 0 ? (
+                    <li className="px-3 py-2 text-muted-foreground italic text-xs">
+                      Provinsi tidak ditemukan...
+                    </li>
+                  ) : (
+                    filteredProvinces.map((prov) => (
+                      <li
+                        key={prov.code}
+                        className="px-3 py-2 hover:bg-muted cursor-pointer transition-colors"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setSelectedProvinsi(prov);
+                          setInputProvinsi(prov.name);
+                          setOpenDropdownProvincies(false);
+                        }}
+                      >
+                        {prov.name}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <div className="relative flex flex-col gap-2 group">
+              <label
+                htmlFor="kabupaten"
+                className={`text-sm font-medium ${!selectedProvinsi ? "text-muted-foreground" : ""}`}
+              >
+                Masukkan Kota/Kabupaten:
+              </label>
+              <input
+                id="kabupaten"
+                type="text"
+                value={inputKabupaten}
+                autoComplete="off"
+                onFocus={() => {
+                  setOpenDropdownRegencies(true);
+                }}
+                onBlur={() => {
+                  setOpenDropdownRegencies(false);
+                }}
+                onChange={(e) => {
+                  setInputKabupaten(e.target.value);
+                  if (e.target.value === "") setSelectedKabupaten(null);
+                }}
+                disabled={!selectedProvinsi}
+                placeholder={
+                  selectedProvinsi
+                    ? "Cari kota/kabupaten..."
+                    : "Pilih provinsi terlebih dahulu"
+                }
+                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/50"
+              />
+              {/* Dropdown Selection */}
+              {selectedProvinsi && (
+                <div
+                  className={`absolute top-full left-0 right-0 z-20 mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-background shadow-md ${openDropdownRegencies ? "group-focus-within:opacity-100 group-focus-within:visible" : "opacity-0 invisible"}  transition-all duration-200`}
+                >
+                  <ul className="flex flex-col py-1 text-sm">
+                    {isLoadingRegencies ? (
+                      <li className="px-3 py-2 text-muted-foreground italic text-xs">
+                        Memuat data...
+                      </li>
+                    ) : filteredRegencies.length === 0 ? (
+                      <li className="px-3 py-2 text-muted-foreground italic text-xs">
+                        Kota/Kabupaten tidak ditemukan...
+                      </li>
+                    ) : (
+                      filteredRegencies.map((reg) => (
+                        <li
+                          key={reg.code}
+                          className="px-3 py-2 hover:bg-muted cursor-pointer transition-colors"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setSelectedKabupaten(reg);
+                            setInputKabupaten(reg.name);
+                            setOpenDropdownRegencies(false);
+                          }}
+                        >
+                          {reg.name}
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                type="button"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
+              >
+                Simpan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
