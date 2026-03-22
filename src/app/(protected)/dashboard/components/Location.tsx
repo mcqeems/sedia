@@ -503,7 +503,7 @@ export default function Location({
         {/* Dropdown Action Trigger */}
         <div className="flex">
           <button
-            className={`h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all outline-none cursor-pointer border flex justify-center items-center ${openActionOptions ? "bg-primary/25 border-primary text-primary" : "border-primary/50 text-primary/50"}`}
+            className={`h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all outline-none cursor-pointer border flex justify-center items-center ${openActionOptions ? "bg-primary/25 border-primary/50" : "border-primary/0 text-primary"}`}
             type="button"
             title="Location options"
             onClick={() => setOpenActionOptions(!openActionOptions)}
