@@ -1,3 +1,4 @@
+import PrakiraanCuaca from "./PrakiraanCuaca";
 import WeatherCard from "./WeatherCard";
 
 export default function Tops() {
@@ -7,9 +8,8 @@ export default function Tops() {
       <div className="flex w-full flex-col gap-2 md:max-w-lg">
         <WeatherCard />
 
-        <div className="h-[300px] w-full rounded-lg bg-primary p-4 text-primary-foreground">
-          Prakiraan Cuaca selama 3 hari
-        </div>
+        <PrakiraanCuaca />
+
         <div className="h-[125px] w-full rounded-lg bg-primary p-4 text-primary-foreground">
           Kabar Gempa bumi terbaru
         </div>
