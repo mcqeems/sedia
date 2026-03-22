@@ -1,5 +1,6 @@
 "use client";
 
+import { IconDroplet } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -58,7 +59,7 @@ export default function PrakiraanCuaca() {
 
   return (
     <div className="h-[300px] w-full rounded-lg bg-primary p-4 text-primary-foreground shadow-xl overflow-hidden flex flex-col relative">
-      <h3 className="font-bold mb-4">Prakiraan Cuaca 3 Hari Kedepan</h3>
+      <h3 className="font-bold mb-2">Prakiraan Cuaca 3 Hari Kedepan</h3>
 
       {!predictionData?.data?.[0]?.cuaca ? (
         <div className="flex-1 flex items-center justify-center">
@@ -119,14 +120,19 @@ export default function PrakiraanCuaca() {
                 <div className="flex items-center gap-3 w-1/3 justify-end">
                   <div className="flex flex-col items-end">
                     <span className="text-sm font-bold">{forecast.t}°C</span>
-                    <span className="text-xs opacity-80">
-                      💧 {forecast.hu}%
+                    <span className="text-xs opacity-80 flex flex-row items-center justify-center">
+                      <IconDroplet className="h-3.5 w-3.5" /> {forecast.hu}%
                     </span>
                   </div>
                 </div>
               </div>
             );
           })}
+          <div className="flex px-2">
+            <p className="text-sm font-light">
+              Sumber: <b>BMKG</b>
+            </p>
+          </div>
         </div>
       )}
 
