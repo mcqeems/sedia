@@ -1,4 +1,12 @@
 "use client";
+import {
+  IconMapPin,
+  IconRipple,
+  IconRulerMeasure2,
+  IconWorld,
+  IconWorldLatitude,
+  IconWorldLongitude,
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
 import { useDashContext } from "@/context/dashContext";
@@ -42,7 +50,7 @@ export default function GempaBumi() {
         <>
           <div className="flex items-center justify-between mb-2 px-1">
             <h3 className="font-bold flex items-center gap-1.5">
-              <span>🔴</span> Gempa Terkini
+              Gempa Terkini
             </h3>
             <span className="text-[10px] opacity-80 font-medium bg-white/10 px-2 py-0.5 rounded-full">
               {gempa.Tanggal} • {gempa.Jam}
@@ -50,7 +58,9 @@ export default function GempaBumi() {
           </div>
 
           <div className="flex items-center gap-3 bg-white/10 rounded-md p-2 hover:bg-white/20 transition-colors flex-1 w-full relative">
-            <div className="flex flex-col items-center justify-center px-4 py-1.5 bg-red-500/20 text-red-50 rounded-md border border-red-400/30">
+            <div
+              className={`flex flex-col items-center justify-center px-4 py-1.5 rounded-md border ${parseFloat(gempa.Magnitude) < 5 ? "text-background" : parseFloat(gempa.Magnitude) < 7 ? "text-yellow-200" : "text-red-300"}`}
+            >
               <span className="text-xl font-bold leading-none">
                 {gempa.Magnitude}
               </span>
@@ -64,30 +74,32 @@ export default function GempaBumi() {
                 className="text-xs font-semibold truncate flex items-center gap-1.5"
                 title={gempa.Wilayah}
               >
-                📍 <span className="truncate">{gempa.Wilayah}</span>
+                <IconMapPin className="w-4 h-4" />{" "}
+                <span className="truncate">{gempa.Wilayah}</span>
               </span>
               <div className="flex items-center gap-3 text-[10px] opacity-85">
                 <span
                   className="flex items-center gap-1 pr-2 border-r border-white/20"
                   title="Kedalaman"
                 >
-                  📏 {gempa.Kedalaman}
+                  <IconRulerMeasure2 className="w-4 h-4" /> {gempa.Kedalaman}
                 </span>
                 <span
                   className="flex items-center gap-1 truncate"
                   title="Potensi"
                 >
-                  🌊 <span className="truncate">{gempa.Potensi}</span>
+                  <IconRipple className="w-4 h-4" />{" "}
+                  <span className="truncate">{gempa.Potensi}</span>
                 </span>
               </div>
             </div>
 
             <div className="hidden sm:flex flex-col items-end justify-center px-2 text-[10px] opacity-75 right-2 absolute">
               <div className="flex items-center gap-1">
-                <span>🌐</span> {gempa.Lintang}
+                <IconWorldLatitude className="w-4 h-4" /> {gempa.Lintang}
               </div>
               <div className="flex items-center gap-1 mt-0.5">
-                <span>🧭</span> {gempa.Bujur}
+                <IconWorldLongitude className="w-4 h-4" /> {gempa.Bujur}
               </div>
             </div>
           </div>
