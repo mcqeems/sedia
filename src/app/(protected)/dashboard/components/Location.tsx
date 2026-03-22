@@ -2,6 +2,7 @@
 
 import {
   IconCurrentLocation,
+  IconDotsVertical,
   IconMapPin,
   IconPencil,
 } from "@tabler/icons-react";
@@ -150,6 +151,7 @@ export default function Location({
   const [isLoadingRegencies, setIsLoadingRegencies] = useState(false);
   const [openDropdownProvincies, setOpenDropdownProvincies] = useState(false);
   const [openDropdownRegencies, setOpenDropdownRegencies] = useState(false);
+  const [openActionOptions, setOpenActionOptions] = useState(false);
   const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showMissingGeoPopup, setShowMissingGeoPopup] = useState(false);
@@ -206,7 +208,11 @@ export default function Location({
       if (profile?.adm_4 && profile?.display_location) {
         dispatch({
           type: "SET_STATE",
-          payload: { displayLocation: profile.display_location },
+          payload: {
+            displayLocation: profile.display_location,
+            latitude: profile.langitude,
+            longitude: profile.longitude,
+          },
         });
       } else {
         if (!geo?.latitude || !geo?.longitude) {
@@ -236,7 +242,11 @@ export default function Location({
             });
             dispatch({
               type: "SET_STATE",
-              payload: { displayLocation: data.display_name },
+              payload: {
+                displayLocation: data.display_name,
+                latitude: latitude,
+                longitude: longitude,
+              },
             });
           } catch (err) {
             console.error("Failed to get adm code", err);
@@ -357,7 +367,11 @@ export default function Location({
             "Gagal mendapatkan lokasi otomatis. Silakan atur lokasi secara manual.",
           );
         },
-        { timeout: 10000 },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        },
       );
     } else {
       setShowMissingGeoPopup(false);
@@ -390,8 +404,15 @@ export default function Location({
               "Mohon izinkan akses lokasi pada browser/perangkat Anda terlebih dahulu untuk menggunakan fitur ini.",
             );
           } else {
-            setErrorMsg("Gagal mendapatkan lokasi. Pastikan GPS aktif.");
+            setErrorMsg(
+              "Gagal mendapatkan lokasi. Pastikan GPS aktif atau coba lagi.",
+            );
           }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
         },
       );
     } else {
@@ -404,8 +425,6 @@ export default function Location({
       type: "SET_STATE",
       payload: { displayLocation: "Updating location..." },
     });
-
-    const profile = await getProfile();
 
     const data = await reverseGeoLocation({
       latitude: lat,
@@ -424,23 +443,14 @@ export default function Location({
         dispatch({
           type: "SET_STATE",
           payload: {
-            displayLocation: profile.display_location || data.display_name,
+            displayLocation: data.display_name,
+            latitude: lat,
+            longitude: lon,
           },
         });
       } catch (err) {
         console.error("Failed to get adm code", err);
       }
-    } else {
-      dispatch({
-        type: "SET_STATE",
-        payload: { displayLocation: "Location unavailable" },
-      });
-    }
-  }
-
-  async function handleUpdateLocation() {
-    if (geo?.latitude && geo?.longitude) {
-      handleUpdateLocationWithCoords(geo.latitude, geo.longitude);
     } else {
       dispatch({
         type: "SET_STATE",
@@ -480,29 +490,61 @@ export default function Location({
         <span>👋</span>
       </div>
 
-      <div className="flex flex-row items-center gap-2 mt-2 md:mt-0">
+      <div className="relative flex flex-row items-center gap-2 mt-2 md:mt-0">
         <span className="flex items-center justify-center shrink-0 ">
           <IconMapPin height={20} width={20} />
         </span>
         <div className="text-sm md:text-right">
           <p className="line-clamp-2 max-w-sm">{state.state.displayLocation}</p>
         </div>
-        <div className="flex flex-row gap-1">
+
+        {/* Dropdown Action Trigger */}
+        <div className="flex">
           <button
-            className="h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all cursor-pointer border border-primary/50 text-primary/50 flex justify-center items-center"
+            className={`h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all outline-none cursor-pointer border flex justify-center items-center ${openActionOptions ? "bg-primary/25 border-primary text-primary" : "border-primary/50 text-primary/50"}`}
             type="button"
-            title="Get the newest location with your gps."
-            onClick={handleRequestGPSLocation}
+            title="Location options"
+            onClick={() => setOpenActionOptions(!openActionOptions)}
+            onBlur={() => setTimeout(() => setOpenActionOptions(false), 200)}
           >
-            <IconCurrentLocation height={20} width={20} />
+            <IconDotsVertical height={20} width={20} />
           </button>
+        </div>
+
+        {/* Dropdown Menu */}
+        <div
+          className={`absolute right-0 top-full mt-2 w-48 bg-background border border-border shadow-lg rounded-xl flex flex-col z-50 overflow-hidden transition-all origin-top-right duration-200 ${
+            openActionOptions
+              ? "scale-100 opacity-100"
+              : "scale-95 opacity-0 pointer-events-none"
+          }`}
+        >
           <button
-            className="h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all cursor-pointer border border-primary/50 text-primary/50 flex justify-center items-center"
             type="button"
-            title="Change your location manually."
-            onClick={handleOpenChangeLocation}
+            className="flex items-center gap-2 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors text-left"
+            onClick={() => {
+              setOpenActionOptions(false);
+              handleRequestGPSLocation();
+            }}
           >
-            <IconPencil height={20} width={20} />
+            <IconCurrentLocation
+              height={16}
+              width={16}
+              className="text-primary"
+            />
+            <span>Gunakan GPS Anda</span>
+          </button>
+          <div className="h-[1px] w-full bg-border" />
+          <button
+            type="button"
+            className="flex items-center gap-2 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors text-left"
+            onClick={() => {
+              setOpenActionOptions(false);
+              handleOpenChangeLocation();
+            }}
+          >
+            <IconPencil height={16} width={16} className="text-primary" />
+            <span>Ubah Secara Manual</span>
           </button>
         </div>
       </div>

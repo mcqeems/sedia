@@ -10,18 +10,19 @@ interface DashboardContents {
   longitude: string | undefined;
 }
 
+interface Status {
+  loadingWeather: boolean;
+  loadingPrediction: boolean;
+  loadingEarthquake: boolean;
+  loadingWeatherWarning: boolean;
+  loadingEarthquakeNews: boolean;
+  loadingMap: boolean;
+  loadingAi: boolean;
+}
+
 interface DashboardStates {
   state: DashboardContents;
-  status:
-    | "idle"
-    | "loading-weather"
-    | "loading-prediction"
-    | "loading-earthquake"
-    | "loading-weather-warning"
-    | "loading-earthquake-news"
-    | "loading-map"
-    | "loading-ai"
-    | "loading-all";
+  status: Status;
 }
 
 const defaultDash: DashboardStates = {
@@ -31,12 +32,20 @@ const defaultDash: DashboardStates = {
     latitude: undefined,
     longitude: undefined,
   },
-  status: "loading-all",
+  status: {
+    loadingWeather: true,
+    loadingPrediction: true,
+    loadingEarthquake: true,
+    loadingWeatherWarning: true,
+    loadingEarthquakeNews: true,
+    loadingMap: true,
+    loadingAi: true,
+  },
 };
 
 export type DashAction =
   | { type: "SET_STATE"; payload: Partial<DashboardContents> }
-  | { type: "SET_STATUS"; payload: DashboardStates["status"] };
+  | { type: "SET_STATUS"; payload: Partial<DashboardStates["status"]> };
 
 interface DashContextType {
   state: DashboardStates;
@@ -53,7 +62,7 @@ function dashReducer(
     case "SET_STATE":
       return { ...state, state: { ...state.state, ...action.payload } };
     case "SET_STATUS":
-      return { ...state, status: action.payload };
+      return { ...state, status: { ...state.status, ...action.payload } };
     default:
       return state;
   }
