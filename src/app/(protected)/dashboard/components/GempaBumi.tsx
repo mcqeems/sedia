@@ -3,7 +3,6 @@ import {
   IconMapPin,
   IconRipple,
   IconRulerMeasure2,
-  IconWorld,
   IconWorldLatitude,
   IconWorldLongitude,
 } from "@tabler/icons-react";
