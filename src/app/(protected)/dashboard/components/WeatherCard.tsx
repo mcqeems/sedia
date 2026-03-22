@@ -59,9 +59,7 @@ export default function WeatherCard() {
       {/* <!-- Kiri: Info Lokasi & Waktu --> */}
       <div className="flex flex-row justify-between md:hidden">
         <div className="relative z-10 flex-1 p-4 flex flex-col justify-center ">
-          <p id="date-string" className="text-xs text-blue-100/70 mb-1">
-            Cuaca Hari Ini
-          </p>
+          <p className="text-xs text-blue-100/70 mb-1">Cuaca Hari Ini</p>
           <h2 id="city-name" className="text-lg font-bold truncate">
             {weatherData?.weather[0].main
               ? weatherTranslations[weatherData.weather[0].main] ||
@@ -69,11 +67,8 @@ export default function WeatherCard() {
               : ""}
           </h2>
 
-          <div className="mt-auto">
-            <span
-              id="weather-desc"
-              className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/20 uppercase tracking-wider"
-            >
+          <div className="mt-auto flex justify-center items-center p-1 md:p-2 rounded-full bg-black/20 uppercase">
+            <span className="text-[10px] text-center font-bold">
               {weatherData?.weather[0].description}
             </span>
           </div>

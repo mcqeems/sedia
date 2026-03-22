@@ -593,7 +593,7 @@ export default function Location({
           {/** biome-ignore lint/a11y/noStaticElementInteractions: why not */}
           {/** biome-ignore lint/a11y/useKeyWithClickEvents: why not */}
           <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-background/50 backdrop-blur-sm"
             onClick={() => !forceManual && handleOpenChangeLocation()}
           ></div>
           <div className="relative w-full max-w-lg bg-background rounded-2xl shadow-2xl border border-border p-6 flex flex-col gap-4 z-10">
