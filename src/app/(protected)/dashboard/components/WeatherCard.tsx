@@ -96,7 +96,7 @@ export default function WeatherCard() {
       </div>
       <div className="relative z-10 flex-1 p-4 md:flex hidden flex-col justify-center bg-background/15 border-r border border-background/25">
         <p id="date-string" className="text-xs text-blue-100/70 mb-1">
-          Cuaca Hari Ini
+          Cuaca sekarang
         </p>
         <h2 id="city-name" className="text-lg font-bold truncate">
           {weatherData?.weather[0].main

@@ -2,12 +2,14 @@
 
 import type React from "react";
 import { createContext, useContext, useReducer } from "react";
+import type { EarthquakeData } from "@/lib/dashboard/tops/getGempa";
 
 interface DashboardContents {
   displayLocation: string | undefined;
   adm4: string | undefined;
   latitude: string | undefined;
   longitude: string | undefined;
+  gempaInfo: EarthquakeData | undefined;
 }
 
 interface Status {
@@ -31,6 +33,7 @@ const defaultDash: DashboardStates = {
     adm4: undefined,
     latitude: undefined,
     longitude: undefined,
+    gempaInfo: undefined,
   },
   status: {
     loadingWeather: true,

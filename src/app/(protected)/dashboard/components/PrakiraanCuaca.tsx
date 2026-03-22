@@ -66,7 +66,7 @@ export default function PrakiraanCuaca() {
           <p className="text-sm opacity-80">Data tidak tersedia</p>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col justify-around gap-2 overflow-y-auto pr-2 custom-scrollbar relative">
+        <div className="flex-1 flex flex-col justify-around gap-2 overflow-y-auto custom-scrollbar relative">
           {predictionData.data[0].cuaca.slice(0, 3).map((dayForecasts, idx) => {
             // Pick a forecast for the day (e.g., the middle of the array, or around noon)
             const forecast =
@@ -151,7 +151,7 @@ export default function PrakiraanCuaca() {
               </h4>
               <button
                 type="button"
-                className="text-white hover:text-red-400 font-bold px-2 rounded-full transition-colors"
+                className="text-background hover:text-background/50 font-bold px-2 rounded-full transition-colors"
                 onClick={() => setSelectedDay(null)}
               >
                 ✕
