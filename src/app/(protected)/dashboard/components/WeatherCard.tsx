@@ -57,7 +57,49 @@ export default function WeatherCard() {
   return (
     <div className="text-white bg-primary flex flex-col sm:flex-row items-stretch justify-between min-h-[125px] rounded-lg shadow-xl overflow-hidden">
       {/* <!-- Kiri: Info Lokasi & Waktu --> */}
-      <div className="relative z-10 flex-1 p-4 flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-white/10">
+      <div className="flex flex-row justify-between md:hidden">
+        <div className="relative z-10 flex-1 p-4 flex flex-col justify-center ">
+          <p id="date-string" className="text-xs text-blue-100/70 mb-1">
+            Cuaca Hari Ini
+          </p>
+          <h2 id="city-name" className="text-lg font-bold truncate">
+            {weatherData?.weather[0].main
+              ? weatherTranslations[weatherData.weather[0].main] ||
+                weatherData.weather[0].main
+              : ""}
+          </h2>
+
+          <div className="mt-auto">
+            <span
+              id="weather-desc"
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/20 uppercase tracking-wider"
+            >
+              {weatherData?.weather[0].description}
+            </span>
+          </div>
+        </div>
+        <div className="relative z-10 flex-[1.2] p-4 flex items-center justify-center gap-2">
+          <div className="flex items-center">
+            <Image
+              src={`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`}
+              alt="weather icon"
+              height={75}
+              width={75}
+              className="drop-shadow-lg"
+            />
+            <div className="flex items-start">
+              <span
+                id="temp-main"
+                className="md:text-4xl text-2xl font-black tracking-tighter"
+              >
+                {weatherData?.main.temp}
+              </span>
+              <span className="text-xl font-bold mt-1 ml-0.5">°C</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="relative z-10 flex-1 p-4 md:flex hidden flex-col justify-center bg-background/15 border-r border border-background/25">
         <p id="date-string" className="text-xs text-blue-100/70 mb-1">
           Cuaca Hari Ini
         </p>
@@ -79,7 +121,7 @@ export default function WeatherCard() {
       </div>
 
       {/* <!-- Tengah: Suhu Utama & Ikon --> */}
-      <div className="relative z-10 flex-[1.2] p-4 flex items-center justify-center gap-2">
+      <div className="relative z-10 flex-[1.2] p-4 hidden md:flex items-center justify-center gap-2">
         <div className="flex items-center">
           <Image
             src={`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`}
