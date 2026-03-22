@@ -55,7 +55,7 @@ export default function WeatherCard() {
   }
 
   return (
-    <div className="text-white bg-primary flex flex-col sm:flex-row items-stretch justify-between min-h-[125px] rounded-lg shadow-xl overflow-hidden">
+    <div className="text-white bg-primary flex flex-col sm:flex-row items-stretch justify-between min-h-[125px] rounded-lg overflow-hidden">
       {/* <!-- Kiri: Info Lokasi & Waktu --> */}
       <div className="flex flex-row justify-between md:hidden">
         <div className="relative z-10 flex-1 p-4 flex flex-col justify-center ">

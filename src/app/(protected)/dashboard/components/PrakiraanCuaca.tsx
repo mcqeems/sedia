@@ -58,7 +58,7 @@ export default function PrakiraanCuaca() {
   }
 
   return (
-    <div className="h-[300px] w-full rounded-lg bg-primary p-4 text-primary-foreground shadow-xl overflow-hidden flex flex-col relative">
+    <div className="h-[300px] w-full rounded-lg bg-primary p-4 text-primary-foreground overflow-hidden flex flex-col relative">
       <h3 className="font-bold mb-2">Prakiraan Cuaca 3 Hari Kedepan</h3>
 
       {!predictionData?.data?.[0]?.cuaca ? (
