@@ -94,7 +94,7 @@ export default function WeatherCard() {
           </div>
         </div>
       </div>
-      <div className="relative z-10 flex-1 p-4 md:flex hidden flex-col justify-center bg-background/15 border-r border border-background/25">
+      <div className="relative z-10 flex-1 p-4 md:flex hidden flex-col justify-center bg-background/10 border-r border border-background/20">
         <p id="date-string" className="text-xs text-blue-100/70 mb-1">
           Cuaca sekarang
         </p>

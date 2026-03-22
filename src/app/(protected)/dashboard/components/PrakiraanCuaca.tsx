@@ -95,7 +95,7 @@ export default function PrakiraanCuaca() {
                 // biome-ignore lint/suspicious/noArrayIndexKey: i don't care
                 key={idx}
                 onClick={() => setSelectedDay(dayForecasts)}
-                className="flex items-center justify-between p-3 rounded-md bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
+                className="flex items-center justify-between p-3 rounded-md bg-background/10 hover:bg-background/20 transition-colors cursor-pointer"
               >
                 <div className="flex flex-col gap-0.5 w-1/3">
                   <span className="font-medium text-sm leading-tight">
