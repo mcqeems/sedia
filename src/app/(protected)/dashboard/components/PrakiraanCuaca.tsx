@@ -1,9 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
 import { useDashContext } from "@/context/dashContext";
-import type { WeatherResponse } from "@/lib/dashboard/tops/getWeatherPrediction";
+import type {
+  WeatherResponse,
+  WeatherTimeline,
+} from "@/lib/dashboard/tops/getWeatherPrediction";
 import getWeatherPrediction from "@/lib/dashboard/tops/getWeatherPrediction";
 import getProfile from "@/lib/supabase/getProfile";
 
@@ -11,6 +15,9 @@ export default function PrakiraanCuaca() {
   const { dispatch, state } = useDashContext();
   const [predictionData, setPredictionData] = useState<WeatherResponse>();
   const [loading, setLoading] = useState(true);
+  const [selectedDay, setSelectedDay] = useState<WeatherTimeline[] | null>(
+    null,
+  );
 
   useEffect(() => {
     const fetchPrediction = async () => {
@@ -50,12 +57,136 @@ export default function PrakiraanCuaca() {
   }
 
   return (
-    <div className="h-[300px] w-full rounded-lg bg-primary p-4 text-primary-foreground shadow-xl overflow-hidden">
-      <h3 className="font-bold mb-4">Prakiraan Cuaca selama 3 hari</h3>
-      {/* TODO: Map your predictionData below */}
-      <pre className="text-xs overflow-auto h-[220px]">
-        {JSON.stringify(predictionData, null, 2)}
-      </pre>
+    <div className="h-[300px] w-full rounded-lg bg-primary p-4 text-primary-foreground shadow-xl overflow-hidden flex flex-col relative">
+      <h3 className="font-bold mb-4">Prakiraan Cuaca 3 Hari Kedepan</h3>
+
+      {!predictionData?.data?.[0]?.cuaca ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm opacity-80">Data tidak tersedia</p>
+        </div>
+      ) : (
+        <div className="flex-1 flex flex-col justify-around gap-2 overflow-y-auto pr-2 custom-scrollbar relative">
+          {predictionData.data[0].cuaca.slice(0, 3).map((dayForecasts, idx) => {
+            // Pick a forecast for the day (e.g., the middle of the array, or around noon)
+            const forecast =
+              dayForecasts[Math.floor(dayForecasts.length / 2)] ||
+              dayForecasts[0];
+
+            if (!forecast) return null;
+
+            // Format timestamp into day format like "Senin", "Selasa"
+            const dateObj = new Date(forecast.local_datetime);
+            const dayName =
+              idx === 0
+                ? "Hari Ini"
+                : new Intl.DateTimeFormat("id-ID", {
+                    weekday: "long",
+                  }).format(dateObj);
+            const dateText = new Intl.DateTimeFormat("id-ID", {
+              day: "numeric",
+              month: "short",
+            }).format(dateObj);
+
+            return (
+              // biome-ignore lint/a11y/noStaticElementInteractions: I don't care
+              // biome-ignore lint/a11y/useKeyWithClickEvents: i don't care
+              <div
+                // biome-ignore lint/suspicious/noArrayIndexKey: i don't care
+                key={idx}
+                onClick={() => setSelectedDay(dayForecasts)}
+                className="flex items-center justify-between p-3 rounded-md bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
+              >
+                <div className="flex flex-col gap-0.5 w-1/3">
+                  <span className="font-medium text-sm leading-tight">
+                    {dayName}
+                  </span>
+                  <span className="text-xs opacity-75">{dateText}</span>
+                </div>
+
+                <div className="flex items-center gap-2 w-1/3 justify-center">
+                  <div className="w-8 h-8 drop-shadow-sm">
+                    <Image
+                      src={forecast.image}
+                      alt={forecast.weather_desc}
+                      fill
+                    />
+                  </div>
+                  <span className="text-sm font-medium hidden sm:block">
+                    {forecast.weather_desc}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3 w-1/3 justify-end">
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm font-bold">{forecast.t}°C</span>
+                    <span className="text-xs opacity-80">
+                      💧 {forecast.hu}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Popup / Modal for Hourly Forecast */}
+      {selectedDay && selectedDay.length > 0 && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/50 backdrop-blur-sm p-4">
+          <div className="bg-primary border border-white/20 w-full max-w-2xl max-h-[300px] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-white/20 bg-white/5">
+              <h4 className="font-bold text-sm">
+                {new Intl.DateTimeFormat("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                }).format(new Date(selectedDay[0].local_datetime))}
+              </h4>
+              <button
+                type="button"
+                className="text-white hover:text-red-400 font-bold px-2 rounded-full transition-colors"
+                onClick={() => setSelectedDay(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="flex overflow-x-auto gap-3 p-4 custom-scrollbar">
+              {selectedDay.map((hourForecast, i) => {
+                const time = new Intl.DateTimeFormat("id-ID", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(new Date(hourForecast.local_datetime));
+
+                return (
+                  <div
+                    // biome-ignore lint/suspicious/noArrayIndexKey: i don't care
+                    key={i}
+                    className="flex flex-col items-center gap-2 min-w-[60px]"
+                  >
+                    <span className="text-xs opacity-80 font-medium">
+                      {time}
+                    </span>
+                    <div className="w-8 h-8 drop-shadow-sm">
+                      <Image
+                        src={hourForecast.image}
+                        alt={hourForecast.weather_desc}
+                        title={hourForecast.weather_desc}
+                        fill
+                      />
+                    </div>
+
+                    <span className="text-sm font-bold">
+                      {hourForecast.t}°C
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         hostname: "openweathermap.org",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "https://api-apps.bmkg.go.id/storage/icon",
+        pathname: "/**",
+      },
     ],
   },
   async rewrites() {
