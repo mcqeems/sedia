@@ -495,7 +495,9 @@ export default function Location({
           <IconMapPin height={20} width={20} />
         </span>
         <div className="text-sm md:text-right">
-          <p className="line-clamp-2 max-w-sm">{state.state.displayLocation}</p>
+          <p className="line-clamp-2 max-w-sm md:max-w-lg">
+            {state.state.displayLocation}
+          </p>
         </div>
 
         {/* Dropdown Action Trigger */}
@@ -513,7 +515,7 @@ export default function Location({
 
         {/* Dropdown Menu */}
         <div
-          className={`absolute right-0 top-full mt-2 w-48 bg-background border border-border shadow-lg rounded-xl flex flex-col z-50 overflow-hidden transition-all origin-top-right duration-200 ${
+          className={`absolute right-0 top-full mt-1 w-48 bg-background border border-border shadow-lg rounded-xl flex flex-col z-50 overflow-hidden transition-all origin-top-right duration-200 ${
             openActionOptions
               ? "scale-100 opacity-100"
               : "scale-95 opacity-0 pointer-events-none"
@@ -521,7 +523,7 @@ export default function Location({
         >
           <button
             type="button"
-            className="flex items-center gap-2 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors text-left"
+            className="flex items-center gap-2 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors text-left cursor-pointer"
             onClick={() => {
               setOpenActionOptions(false);
               handleRequestGPSLocation();
@@ -537,7 +539,7 @@ export default function Location({
           <div className="h-[1px] w-full bg-border" />
           <button
             type="button"
-            className="flex items-center gap-2 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors text-left"
+            className="flex items-center gap-2 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors text-left cursor-pointer"
             onClick={() => {
               setOpenActionOptions(false);
               handleOpenChangeLocation();
