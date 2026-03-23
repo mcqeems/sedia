@@ -56,14 +56,14 @@ export default function WeatherCard() {
 
   if (isLoading) {
     return (
-      <div className="flex w-full min-h-[250px] sm:min-h-[125px] rounded-lg shadow-xl bg-primary/50 overflow-hidden">
+      <div className="flex h-full w-full min-h-[250px] rounded-lg shadow-xl bg-primary/50 overflow-hidden md:min-h-0">
         <Skeleton />
       </div>
     );
   }
 
   return (
-    <div className="text-white bg-primary flex flex-col sm:flex-row items-stretch justify-between min-h-[125px] rounded-lg overflow-hidden">
+    <div className="text-white bg-primary flex h-full flex-col sm:flex-row items-stretch justify-between min-h-[125px] rounded-lg overflow-hidden md:min-h-0">
       {/* <!-- Kiri: Info Lokasi & Waktu --> */}
       <div className="flex flex-row justify-between md:hidden">
         <div className="relative z-10 flex-1 p-4 flex flex-col justify-center ">

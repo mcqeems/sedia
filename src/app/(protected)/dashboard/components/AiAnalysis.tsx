@@ -78,7 +78,7 @@ export default function AiAnalysis() {
   }
 
   return (
-    <div className="max-h-[275px] h-full w-full rounded-lg bg-primary p-4 text-white flex flex-col md:h-full justify-between relative overflow-hidden">
+    <div className="max-h-[275px] w-full shrink-0 rounded-lg bg-primary p-4 text-white flex flex-col justify-between relative overflow-hidden">
       {/* Loading Overlay when generating */}
       {generating && (
         <div className="absolute inset-0 bg-primary/80 backdrop-blur-sm z-10 flex items-center justify-center">

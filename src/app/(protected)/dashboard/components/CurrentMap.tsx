@@ -8,11 +8,11 @@ export default function CurrentMap() {
   return (
     <>
       {!state.state.latitude && !state.state.longitude ? (
-        <div className="flex w-full min-h-[275px] rounded-lg bg-primary/50 overflow-hidden">
+        <div className="flex h-full w-full min-h-[275px] rounded-lg bg-primary/50 overflow-hidden md:min-h-0">
           <Skeleton />
         </div>
       ) : (
-        <div className="w-full rounded-lg bg-primary p-4 text-primary-foreground md:h-full overflow-hidden ">
+        <div className="h-full w-full min-h-[275px] rounded-lg bg-primary p-4 text-primary-foreground overflow-hidden md:min-h-0">
           <MapChart
             latitude={Number(state.state.latitude)}
             longitude={Number(state.state.longitude)}

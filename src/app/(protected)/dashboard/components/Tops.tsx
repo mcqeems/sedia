@@ -6,17 +6,21 @@ import WeatherCard from "./WeatherCard";
 
 export default function Tops() {
   return (
-    <div className="flex w-full flex-col gap-2 md:flex-row">
+    <div className="flex w-full flex-col gap-2 md:h-[575px] md:flex-row">
       {/* Left Side */}
-      <div className="flex h-full md:max-h-[575px] w-full flex-col gap-2 md:max-w-lg">
-        <WeatherCard />
+      <div className="flex h-full w-full flex-col gap-2 md:max-w-lg">
+        <div className="md:min-h-0 md:flex-1">
+          <WeatherCard />
+        </div>
         <PrakiraanCuaca />
         <GempaBumi />
       </div>
 
       {/* Right Side */}
-      <div className="flex h-full md:max-h-[575px] w-full flex-col gap-2">
-        <CurrentMap />
+      <div className="flex h-full w-full flex-col gap-2 md:min-h-0">
+        <div className="min-h-[275px] md:min-h-0 md:flex-1">
+          <CurrentMap />
+        </div>
         <AiAnalysis />
       </div>
     </div>
