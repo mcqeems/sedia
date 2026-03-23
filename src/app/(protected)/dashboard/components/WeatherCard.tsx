@@ -31,22 +31,30 @@ const weatherTranslations: Record<string, string> = {
 export default function WeatherCard() {
   const { dispatch, state } = useDashContext();
   const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const response = async () => {
-      if (state.state.latitude && state.state.longitude) {
-        const weather = await getWeather({
-          latitude: state.state.latitude,
-          longitude: state.state.longitude,
-        });
-        setWeatherData(weather);
-        dispatch({ type: "SET_STATUS", payload: { loadingWeather: false } });
-      }
-    };
-    response();
+    if (state.state.latitude && state.state.longitude) {
+      const fetchWeather = async () => {
+        try {
+          const data = await getWeather({
+            latitude: state.state.latitude,
+            longitude: state.state.longitude,
+          });
+          setWeatherData(data);
+          dispatch({ type: "SET_STATE", payload: { cuaca: data } });
+        } catch (error) {
+          console.error("Failed to fetch weather: ", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchWeather();
+    }
   }, [state.state.latitude, state.state.longitude, dispatch]);
 
-  if (state.status.loadingWeather) {
+  if (isLoading) {
     return (
       <div className="flex w-full min-h-[250px] sm:min-h-[125px] rounded-lg shadow-xl bg-primary/50 overflow-hidden">
         <Skeleton />

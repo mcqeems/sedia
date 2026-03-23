@@ -25,6 +25,8 @@ export default async function updateProfile({
 }: UpdateProfile) {
   const supabase = await createClient();
 
+  const nowIsoString = new Date().toISOString();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -45,6 +47,7 @@ export default async function updateProfile({
       adm_4: adm4,
       langitude: langitude,
       longitude: longitude,
+      updated_at: nowIsoString,
     })
     .eq("user_id", user.id);
 
