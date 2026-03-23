@@ -179,6 +179,15 @@ export default function BeritaGempa() {
                           </span>
                           <p>{gempa.Dirasakan}</p>
                         </div>
+                        <div className="text-foreground flex flex-row gap-2">
+                          <p>Sumber:</p>
+                          <a
+                            className="font-bold text-primary hover:underline"
+                            href="https://www.bmkg.go.id/"
+                          >
+                            BMKG
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
