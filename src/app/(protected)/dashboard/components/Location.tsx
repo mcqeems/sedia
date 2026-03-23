@@ -534,7 +534,7 @@ export default function Location({
               width={16}
               className="text-primary"
             />
-            <span>Gunakan GPS Anda</span>
+            <span>Relokasi Posisi</span>
           </button>
           <div className="h-[1px] w-full bg-border" />
           <button
@@ -546,7 +546,7 @@ export default function Location({
             }}
           >
             <IconPencil height={16} width={16} className="text-primary" />
-            <span>Ubah Secara Manual</span>
+            <span>Ubah Lokasi Manual</span>
           </button>
         </div>
       </div>
