@@ -1,7 +1,6 @@
 "use server";
 
 import { GoogleGenAI } from "@google/genai";
-import getAnalysis from "@/lib/supabase/getAnalysis";
 import insertAnalysis from "@/lib/supabase/insertAnalysis";
 import updateAnalysis from "@/lib/supabase/updateAnalysis";
 
@@ -18,7 +17,7 @@ interface Prerequisites {
 interface Content {
   headline: string;
   analysis_detail: string;
-  potential_riks: string[] | string;
+  potential_risks: string[] | string;
   action_steps: string[] | string;
   urgency_level: number;
 }
@@ -107,21 +106,17 @@ ${peringatanCuaca}
     throw new Error("Invalid AI response format");
   }
 
-  const analysisData = await getAnalysis();
+  const updated = await updateAnalysis({
+    status: data.status,
+    content: data.content,
+  });
 
-  if (analysisData?.status) {
-    await updateAnalysis({
-      status: data.status,
-      content: data.content,
-    });
-
-    return data;
-  } else {
+  if (!updated) {
     await insertAnalysis({
       status: data.status,
       content: data.content,
     });
-
-    return data;
   }
+
+  return data;
 }

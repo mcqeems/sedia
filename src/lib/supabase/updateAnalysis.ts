@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 interface Content {
   headline: string;
   analysis_detail: string;
-  potential_riks: string[] | string;
+  potential_risks: string[] | string;
   action_steps: string[] | string;
   urgency_level: number;
 }
@@ -25,19 +25,23 @@ export default async function updateAnalysis({ status, content }: Analysis) {
 
   if (!user?.id) {
     console.error("No active user found to update analysis.");
-    return;
+    return false;
   }
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("analysis")
     .update({
       status: status,
       content: content,
       updated_at: nowIsoString,
     })
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .select("id");
 
   if (error) {
     console.error("Error while updating database: ", error);
+    throw new Error("Failed to update analysis");
   }
+
+  return (data?.length ?? 0) > 0;
 }

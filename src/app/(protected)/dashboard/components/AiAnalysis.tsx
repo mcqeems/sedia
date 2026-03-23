@@ -51,6 +51,25 @@ export default function AiAnalysis() {
   const urgencyLevel = analysisContent?.urgency_level ?? 0;
   const urgencyLabel =
     urgencyLevel >= 7 ? "Tinggi" : urgencyLevel >= 4 ? "Sedang" : "Rendah";
+  const updatedAtLabel = useMemo(() => {
+    const rawUpdatedAt = analysis?.updated_at;
+
+    if (!rawUpdatedAt) {
+      return "Baru saja";
+    }
+
+    const updatedAtDate = new Date(rawUpdatedAt);
+    if (Number.isNaN(updatedAtDate.getTime())) {
+      return "Baru saja";
+    }
+
+    return new Intl.DateTimeFormat("id-ID", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(updatedAtDate);
+  }, [analysis?.updated_at]);
 
   useEffect(() => {
     const fetchAnalysisData = async () => {
@@ -127,17 +146,9 @@ export default function AiAnalysis() {
 
         {analysis && (
           <div className="flex flex-row items-center gap-3 mt-1">
-            {analysis.updated_at && (
-              <p className="text-xs font-medium opacity-80">
-                Diperbarui:{" "}
-                {new Intl.DateTimeFormat("id-ID", {
-                  day: "numeric",
-                  month: "short",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }).format(new Date(analysis.updated_at))}
-              </p>
-            )}
+            <p className="text-xs font-medium opacity-80">
+              Diperbarui: {updatedAtLabel}
+            </p>
             <button
               type="button"
               onClick={handleGenerate}
@@ -176,11 +187,11 @@ export default function AiAnalysis() {
             <div
               className={`p-2 rounded-lg flex-shrink-0 ${
                 analysis.status === "Aman"
-                  ? "bg-emerald-500/20 text-emerald-400"
+                  ? "border text-background"
                   : analysis.status === "Waspada"
-                    ? "bg-yellow-500/20 text-yellow-400"
+                    ? "text-yellow-200 border border-yellow-200"
                     : analysis.status === "Siaga"
-                      ? "bg-orange-500/20 text-orange-400"
+                      ? "border border-red-300 text-red-300"
                       : "bg-red-500/20 text-red-400"
               }`}
             >
@@ -227,11 +238,11 @@ export default function AiAnalysis() {
                 <div
                   className={`p-2 rounded-lg flex-shrink-0 ${
                     analysis.status === "Aman"
-                      ? "bg-emerald-500/20 text-emerald-400"
+                      ? "border text-background"
                       : analysis.status === "Waspada"
-                        ? "bg-yellow-500/20 text-yellow-400"
+                        ? "text-yellow-200 border border-yellow-200"
                         : analysis.status === "Siaga"
-                          ? "bg-orange-500/20 text-orange-400"
+                          ? "border border-red-300 text-red-300"
                           : "bg-red-500/20 text-red-400"
                   }`}
                 >
