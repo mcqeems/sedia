@@ -6,7 +6,7 @@ import WeatherCard from "./WeatherCard";
 
 export default function Tops() {
   return (
-    <div className="flex w-full flex-col gap-2 md:h-[575px] md:flex-row">
+    <div className="flex w-full flex-col gap-2 md:h-[565px] md:flex-row">
       {/* Left Side */}
       <div className="flex h-full w-full flex-col gap-2 md:max-w-lg">
         <div className="md:min-h-0 md:flex-1">
