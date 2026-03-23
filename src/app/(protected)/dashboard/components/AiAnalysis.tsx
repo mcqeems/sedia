@@ -184,30 +184,25 @@ export default function AiAnalysis() {
             onClick={() => setShowDetails(true)}
             className="flex items-start text-left gap-4 p-3 bg-background/10 rounded-lg border border-white/5 cursor-pointer hover:bg-background/20 transition-colors w-full"
           >
-            <div
-              className={`p-2 rounded-lg flex-shrink-0 ${
-                analysis.status === "Aman"
-                  ? "border text-background"
-                  : analysis.status === "Waspada"
-                    ? "text-yellow-200 border border-yellow-200"
-                    : analysis.status === "Siaga"
-                      ? "border border-red-300 text-red-300"
-                      : "bg-red-500/20 text-red-400"
-              }`}
-            >
-              {analysis.status === "Aman" ? (
-                <IconCheck className="w-6 h-6" />
-              ) : analysis.status === "Waspada" ? (
-                <IconAlertTriangle className="w-6 h-6" />
-              ) : (
-                <IconRadioactive className="w-6 h-6" />
-              )}
-            </div>
-
             <div>
-              <p className="text-sm font-bold opacity-90 mb-1">
-                Status: {analysis.status}
-              </p>
+              <div className="flex flex-row items-center gap-1">
+                <p className="text-sm font-bold opacity-90 mb-1">Status:</p>
+                <div
+                  className={`flex justify-center items-center gap-1 px-2 ${analysis.status === "Aman" ? "bg-background/10 " : analysis.status === "Waspada" ? "bg-yellow-200" : "bg-red-200"} bg-background/10 rounded-2xl`}
+                >
+                  {analysis.status === "Aman" ? (
+                    <IconCheck className="w-4 h-4" />
+                  ) : analysis.status === "Waspada" ? (
+                    <IconAlertTriangle className="w-4 h-4" />
+                  ) : (
+                    <IconRadioactive className="w-4 h-4" />
+                  )}
+                  <p className="text-sm font-bold opacity-90">
+                    {analysis.status}
+                  </p>
+                </div>
+              </div>
+
               <p className="text-sm font-medium leading-snug">
                 {analysisContent?.headline}
               </p>
@@ -234,31 +229,26 @@ export default function AiAnalysis() {
               </button>
             </div>
             <div className="overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
-              <div className="flex items-start gap-3 p-3 bg-background/10 rounded-lg flex-shrink-0">
-                <div
-                  className={`p-2 rounded-lg flex-shrink-0 ${
-                    analysis.status === "Aman"
-                      ? "border text-background"
-                      : analysis.status === "Waspada"
-                        ? "text-yellow-200 border border-yellow-200"
-                        : analysis.status === "Siaga"
-                          ? "border border-red-300 text-red-300"
-                          : "bg-red-500/20 text-red-400"
-                  }`}
-                >
-                  {analysis.status === "Aman" ? (
-                    <IconCheck className="w-5 h-5" />
-                  ) : analysis.status === "Waspada" ? (
-                    <IconAlertTriangle className="w-5 h-5" />
-                  ) : (
-                    <IconRadioactive className="w-5 h-5" />
-                  )}
+              <div className="flex flex-col items-start gap-1 p-3 bg-background/10 rounded-lg flex-shrink-0">
+                <div className="flex flex-row items-center gap-1">
+                  <p className="text-sm font-bold opacity-90 mb-1">Status:</p>
+                  <div
+                    className={`flex justify-center items-center gap-1 px-2 ${analysis.status === "Aman" ? "bg-background/10 " : analysis.status === "Waspada" ? "bg-yellow-200" : "bg-red-200"} bg-background/10 rounded-2xl`}
+                  >
+                    {analysis.status === "Aman" ? (
+                      <IconCheck className="w-4 h-4" />
+                    ) : analysis.status === "Waspada" ? (
+                      <IconAlertTriangle className="w-4 h-4" />
+                    ) : (
+                      <IconRadioactive className="w-4 h-4" />
+                    )}
+                    <p className="text-sm font-bold opacity-90">
+                      {analysis.status}
+                    </p>
+                  </div>
                 </div>
 
                 <div>
-                  <p className="text-sm font-bold opacity-90 mb-0.5">
-                    Status: {analysis.status}
-                  </p>
                   <p className="text-sm font-medium leading-snug opacity-80">
                     {analysisContent?.headline}
                   </p>
