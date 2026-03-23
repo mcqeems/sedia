@@ -98,7 +98,7 @@ export default function BeritaGempa() {
               </button>
             </div>
 
-            <div className="flex flex-col overflow-y-auto gap-3 p-4 custom-scrollbar">
+            <div className="flex flex-col overflow-y-auto gap-3 p-4">
               {allGempa.map((gempa, idx) => (
                 <div
                   // biome-ignore lint/suspicious/noArrayIndexKey: idk

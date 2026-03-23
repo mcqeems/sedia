@@ -85,7 +85,7 @@ export default function BeritaPeringatanCuaca() {
       {/* Popup / Modal for Semua Peringatan */}
       {isModalOpen && peringatanCuaca && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/50 backdrop-blur-sm p-4">
-          <div className="bg-primary border border-white/20 w-full max-w-2xl rounded-xl shadow-2xl flex flex-col overflow-hidden text-primary-foreground">
+          <div className="bg-primary border border-white/20 w-full max-w-2xl rounded-xl shadow-2xl flex flex-col overflow-hidden text-primary-foreground max-h-[80vh]">
             <div className="flex items-center justify-between p-4 border-b border-white/20 bg-white/5">
               <h4 className="font-bold text-sm">Semua Peringatan Dini Cuaca</h4>
               <button
@@ -97,12 +97,12 @@ export default function BeritaPeringatanCuaca() {
               </button>
             </div>
 
-            <div className="flex flex-col overflow-y-auto gap-3 p-4 custom-scrollbar">
+            <div className="flex flex-col overflow-y-auto gap-3 p-4 ">
               {peringatanCuaca.map((peringatan, idx) => (
                 <div
                   // biome-ignore lint/suspicious/noArrayIndexKey: Fixed static array handling
                   key={idx}
-                  className="flex flex-col bg-background/10 hover:bg-background/20 transition-colors rounded-lg overflow-hidden border border-white/5"
+                  className="flex flex-col bg-background/10 hover:bg-background/20 transition-colors rounded-lg border border-white/5"
                 >
                   {/* biome-ignore lint/a11y/useKeyWithClickEvents: Click handled securely */}
                   {/* biome-ignore lint/a11y/noStaticElementInteractions: UI structure */}
