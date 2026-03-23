@@ -129,9 +129,15 @@ export default function PrakiraanCuaca() {
             );
           })}
           <div className="flex px-2">
-            <p className="text-sm font-light">
-              Sumber: <b>BMKG</b>
-            </p>
+            <div className="text-background text-sm flex flex-row gap-2 items-center justify-center">
+              <p>Sumber:</p>
+              <a
+                className="font-bold text-background hover:underline"
+                href="https://www.bmkg.go.id/"
+              >
+                BMKG
+              </a>
+            </div>
           </div>
         </div>
       )}

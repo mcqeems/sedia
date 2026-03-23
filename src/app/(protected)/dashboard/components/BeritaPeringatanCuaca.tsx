@@ -152,7 +152,16 @@ export default function BeritaPeringatanCuaca() {
                         <p className="opacity-90 leading-relaxed text-left text-foreground">
                           {peringatan.description}
                         </p>
-                        <div className="mt-4 flex justify-end">
+                        <div className="mt-4 flex justify-between items-center">
+                          <div className="text-foreground flex flex-row gap-2 items-center justify-center">
+                            <p>Sumber:</p>
+                            <a
+                              className="font-bold text-primary hover:underline"
+                              href="https://www.bmkg.go.id/"
+                            >
+                              BMKG
+                            </a>
+                          </div>
                           <a
                             href={peringatan.link}
                             target="_blank"
