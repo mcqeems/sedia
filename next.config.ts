@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
         source: "/api/bmkg/:path*",
         destination: "https://www.bmkg.go.id/:path*",
       },
+      {
+        source: "/api/data-bmkg/:path*",
+        destination: "https://data.bmkg.go.id/:path*",
+      },
     ];
   },
 };
