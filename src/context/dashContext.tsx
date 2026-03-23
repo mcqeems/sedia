@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { createContext, useContext, useReducer } from "react";
+import type { WeatherAlert } from "@/lib/dashboard/bottoms/getPeringatanCuaca";
 import type { EarthquakeData } from "@/lib/dashboard/tops/getGempa";
 
 interface DashboardContents {
@@ -10,6 +11,7 @@ interface DashboardContents {
   latitude: string | undefined;
   longitude: string | undefined;
   gempaInfo: EarthquakeData | undefined;
+  peringatanCuaca: WeatherAlert[] | undefined;
 }
 
 interface Status {
@@ -34,6 +36,7 @@ const defaultDash: DashboardStates = {
     latitude: undefined,
     longitude: undefined,
     gempaInfo: undefined,
+    peringatanCuaca: undefined,
   },
   status: {
     loadingWeather: true,

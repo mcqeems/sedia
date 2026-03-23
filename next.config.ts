@@ -12,8 +12,8 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "https://api-apps.bmkg.go.id/storage/icon",
-        pathname: "/**",
+        hostname: "api-apps.bmkg.go.id",
+        pathname: "/storage/icon/**",
       },
     ],
   },
@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
       {
         source: "/api/wilayah/:path*",
         destination: "https://wilayah.id/api/:path*",
+      },
+      {
+        source: "/api/bmkg/:path*",
+        destination: "https://www.bmkg.go.id/:path*",
       },
     ];
   },
