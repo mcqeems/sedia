@@ -1,3 +1,4 @@
+import AiAnalysis from "./AiAnalysis";
 import CurrentMap from "./CurrentMap";
 import GempaBumi from "./GempaBumi";
 import PrakiraanCuaca from "./PrakiraanCuaca";
@@ -16,9 +17,7 @@ export default function Tops() {
       {/* Right Side */}
       <div className="flex w-full flex-col gap-2">
         <CurrentMap />
-        <div className="min-h-[250px] w-full rounded-lg bg-primary p-4 text-primary-foreground md:h-full">
-          AI Analysis
-        </div>
+        <AiAnalysis />
       </div>
     </div>
   );
