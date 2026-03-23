@@ -22,7 +22,7 @@ export default function MapChart({ latitude, longitude }: MapChartProps) {
   if (!latitude || !longitude) return null;
 
   return (
-    <div className="w-full h-full min-h-[250px] bg-background/10 rounded-lg overflow-hidden">
+    <div className="w-full h-full max-h-[335px] bg-background/10 rounded-lg overflow-hidden">
       <ComposableMap
         projection="geoMercator"
         style={{ width: "100%", height: "100%" }}
@@ -33,8 +33,8 @@ export default function MapChart({ latitude, longitude }: MapChartProps) {
           agar secara default Map memfokuskan / zoom in pada pulau/titik tersebut saja.
         */}
         <ZoomableGroup
-          center={[longitude, latitude]}
-          zoom={25}
+          center={[longitude - 2, latitude - 2]}
+          zoom={15}
           minZoom={15}
           maxZoom={50}
         >

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/client";
 interface Analysis {
   status?: string | null;
   content?: string | null;
+  updated_at?: string | null;
 }
 
 export default async function getAnalysis() {
@@ -18,7 +19,7 @@ export default async function getAnalysis() {
 
   const { data, error } = await supabase
     .from("analysis")
-    .select("status, content")
+    .select("status, content, updated_at")
     .eq("user_id", user.id)
     .single();
 

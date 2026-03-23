@@ -8,14 +8,14 @@ export default function Tops() {
   return (
     <div className="flex w-full flex-col gap-2 md:flex-row">
       {/* Left Side */}
-      <div className="flex w-full flex-col gap-2 md:max-w-lg">
+      <div className="flex h-full md:max-h-[575px] w-full flex-col gap-2 md:max-w-lg">
         <WeatherCard />
         <PrakiraanCuaca />
         <GempaBumi />
       </div>
 
       {/* Right Side */}
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex h-full md:max-h-[575px] w-full flex-col gap-2">
         <CurrentMap />
         <AiAnalysis />
       </div>

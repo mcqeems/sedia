@@ -1,3 +1,5 @@
+"use server";
+
 import { GoogleGenAI } from "@google/genai";
 import getAnalysis from "@/lib/supabase/getAnalysis";
 import insertAnalysis from "@/lib/supabase/insertAnalysis";
@@ -26,7 +28,9 @@ interface Response {
   content: Content;
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const getAiInstance = () => {
+  return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+};
 
 export default async function getAiAnalyisis({
   displayLocation,
@@ -37,6 +41,7 @@ export default async function getAiAnalyisis({
   peringatanCuaca,
   cuaca,
 }: Prerequisites) {
+  const ai = getAiInstance();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `
@@ -88,18 +93,30 @@ ${peringatanCuaca}
 		`,
   });
 
-  const data = response as unknown as Response;
+  const textResponse = response.text || "";
+  const cleanedText = textResponse
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
+
+  let data: Response;
+  try {
+    data = JSON.parse(cleanedText);
+  } catch (error) {
+    console.error("Failed to parse AI response:", error);
+    throw new Error("Invalid AI response format");
+  }
 
   const analysisData = await getAnalysis();
 
-  if (analysisData) {
+  if (analysisData?.status) {
     await updateAnalysis({
       status: data.status,
       content: data.content,
     });
 
     return data;
-  } else if (!analysisData) {
+  } else {
     await insertAnalysis({
       status: data.status,
       content: data.content,

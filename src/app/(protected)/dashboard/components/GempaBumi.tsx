@@ -92,7 +92,7 @@ export default function GempaBumi() {
                 </span>
               </div>
             </div>
-
+            {/* 
             <div className="hidden sm:flex flex-col items-end justify-center px-2 text-[10px] opacity-75 right-2 absolute">
               <div className="flex items-center gap-1">
                 <IconWorldLatitude className="w-4 h-4" /> {gempa.Lintang}
@@ -100,7 +100,7 @@ export default function GempaBumi() {
               <div className="flex items-center gap-1 mt-0.5">
                 <IconWorldLongitude className="w-4 h-4" /> {gempa.Bujur}
               </div>
-            </div>
+            </div> */}
           </div>
         </>
       )}
