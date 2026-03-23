@@ -6,6 +6,7 @@ import {
   IconMapPin,
   IconPlus,
   IconRulerMeasure2,
+  IconX,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -85,16 +86,16 @@ export default function BeritaGempa() {
 
       {/* Popup / Modal */}
       {isModalOpen && allGempa && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/50 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/50 backdrop-blur-sm p-4 overflow-hidden">
           <div className="bg-primary border border-white/20 w-full max-w-2xl max-h-[80vh] rounded-xl shadow-2xl flex flex-col overflow-hidden text-primary-foreground">
             <div className="flex items-center justify-between p-4 border-b border-white/20 bg-white/5 shrink-0">
               <h4 className="font-bold text-sm">15 Gempa Dirasakan Terbaru</h4>
               <button
                 type="button"
-                className="text-background hover:text-background/50 font-bold px-2 rounded-full transition-colors"
                 onClick={() => setIsModalOpen(false)}
+                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
               >
-                ✕
+                <IconX className="w-5 h-5" />
               </button>
             </div>
 
@@ -155,8 +156,10 @@ export default function BeritaGempa() {
                           </span>
                           <span className="flex items-center gap-1">
                             <IconMapPin className="w-5 h-5" /> Koordinat:{" "}
-                            <b>{gempa.Coordinates}</b> (Lintang: {gempa.Lintang}
-                            , Bujur: {gempa.Bujur})
+                            <b>{gempa.Coordinates}</b>{" "}
+                            <span className="hidden md:block">
+                              (Lintang: {gempa.Lintang}, Bujur: {gempa.Bujur})
+                            </span>
                           </span>
                           <span className="flex items-center gap-1">
                             <IconCalendarWeek className="w-5 h-5" /> Waktu:{" "}
@@ -164,10 +167,10 @@ export default function BeritaGempa() {
                               {new Intl.DateTimeFormat("id-ID", {
                                 weekday: "long",
                                 day: "numeric",
-                                month: "long",
+                                month: "short",
                                 year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
+                                hour: "numeric",
+                                minute: "numeric",
                                 timeZoneName: "short",
                               }).format(new Date(gempa.DateTime))}
                             </b>

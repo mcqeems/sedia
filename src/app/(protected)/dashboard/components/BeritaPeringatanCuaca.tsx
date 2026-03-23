@@ -1,6 +1,6 @@
 "use client";
 
-import { IconChevronDown, IconPlus } from "@tabler/icons-react";
+import { IconChevronDown, IconPlus, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -84,16 +84,16 @@ export default function BeritaPeringatanCuaca() {
 
       {/* Popup / Modal for Semua Peringatan */}
       {isModalOpen && peringatanCuaca && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/50 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/50 backdrop-blur-sm p-4 overflow-hidden">
           <div className="bg-primary border border-white/20 w-full max-w-2xl rounded-xl shadow-2xl flex flex-col overflow-hidden text-primary-foreground max-h-[80vh]">
             <div className="flex items-center justify-between p-4 border-b border-white/20 bg-white/5">
               <h4 className="font-bold text-sm">Semua Peringatan Dini Cuaca</h4>
               <button
                 type="button"
-                className="text-background hover:text-background/50 font-bold px-2 rounded-full transition-colors"
                 onClick={() => setIsModalOpen(false)}
+                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
               >
-                ✕
+                <IconX className="w-5 h-5" />
               </button>
             </div>
 

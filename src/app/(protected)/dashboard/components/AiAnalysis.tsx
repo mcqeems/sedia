@@ -4,14 +4,25 @@ import {
   IconActivity,
   IconAlertTriangle,
   IconCheck,
+  IconFlame,
+  IconListCheck,
   IconRadioactive,
+  IconShieldExclamation,
   IconX,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Skeleton from "@/components/Skeleton";
 import { useDashContext } from "@/context/dashContext";
 import getAiAnalyisis from "@/lib/dashboard/tops/getAiAnalyisis";
 import getAnalysis from "@/lib/supabase/getAnalysis";
+
+type AnalysisContent = {
+  headline?: string;
+  analysis_detail?: string;
+  potential_risks?: string[];
+  action_steps?: string[];
+  urgency_level?: number;
+};
 
 export default function AiAnalysis() {
   const { state } = useDashContext();
@@ -20,6 +31,26 @@ export default function AiAnalysis() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+
+  const analysisContent = useMemo<AnalysisContent | null>(() => {
+    if (!analysis?.content) {
+      return null;
+    }
+
+    if (typeof analysis.content === "string") {
+      try {
+        return JSON.parse(analysis.content) as AnalysisContent;
+      } catch {
+        return null;
+      }
+    }
+
+    return analysis.content as AnalysisContent;
+  }, [analysis]);
+
+  const urgencyLevel = analysisContent?.urgency_level ?? 0;
+  const urgencyLabel =
+    urgencyLevel >= 7 ? "Tinggi" : urgencyLevel >= 4 ? "Sedang" : "Rendah";
 
   useEffect(() => {
     const fetchAnalysisData = async () => {
@@ -97,7 +128,7 @@ export default function AiAnalysis() {
         {analysis && (
           <div className="flex flex-row items-center gap-3 mt-1">
             {analysis.updated_at && (
-              <p className="text-[10px] font-medium opacity-60">
+              <p className="text-xs font-medium opacity-80">
                 Diperbarui:{" "}
                 {new Intl.DateTimeFormat("id-ID", {
                   day: "numeric",
@@ -167,11 +198,9 @@ export default function AiAnalysis() {
                 Status: {analysis.status}
               </p>
               <p className="text-sm font-medium leading-snug">
-                {typeof analysis.content === "string"
-                  ? JSON.parse(analysis.content).headline
-                  : analysis.content?.headline}
+                {analysisContent?.headline}
               </p>
-              <p className="text-[10px] font-medium opacity-60 mt-1 cursor-pointer hover:underline text-blue-300">
+              <p className="text-[10px] font-medium opacity-90 mt-1 cursor-pointer hover:underline ">
                 Lihat Detail
               </p>
             </div>
@@ -181,7 +210,7 @@ export default function AiAnalysis() {
 
       {/* Details Popup */}
       {showDetails && analysis && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/50 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/50 backdrop-blur-sm p-4 overflow-hidden">
           <div className="bg-primary border border-white/20 w-full max-w-2xl max-h-[80vh] rounded-xl flex flex-col overflow-hidden text-white">
             <div className="flex items-center justify-between p-4 border-b border-white/20 bg-white/5 shrink-0">
               <h3 className="font-bold">Detail Analisis</h3>
@@ -194,7 +223,7 @@ export default function AiAnalysis() {
               </button>
             </div>
             <div className="overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
-              <div className="flex items-start gap-3 p-3 bg-background/10 rounded-lg border border-white/5 flex-shrink-0">
+              <div className="flex items-start gap-3 p-3 bg-background/10 rounded-lg flex-shrink-0">
                 <div
                   className={`p-2 rounded-lg flex-shrink-0 ${
                     analysis.status === "Aman"
@@ -216,44 +245,84 @@ export default function AiAnalysis() {
                 </div>
 
                 <div>
-                  <p className="text-xs font-bold opacity-90 mb-0.5">
+                  <p className="text-sm font-bold opacity-90 mb-0.5">
                     Status: {analysis.status}
                   </p>
-                  <p className="text-xs font-medium leading-snug opacity-80">
-                    {typeof analysis.content === "string"
-                      ? JSON.parse(analysis.content).headline
-                      : analysis.content?.headline}
+                  <p className="text-sm font-medium leading-snug opacity-80">
+                    {analysisContent?.headline}
                   </p>
                 </div>
               </div>
 
               <div>
-                <p className="text-xs opacity-80 leading-relaxed mb-4">
-                  {typeof analysis.content === "string"
-                    ? JSON.parse(analysis.content).analysis_detail
-                    : analysis.content?.analysis_detail}
+                <p className="text-sm opacity-80 leading-relaxed mb-4">
+                  {analysisContent?.analysis_detail}
                 </p>
 
-                <div className="space-y-2">
-                  <h3 className="text-[10px] uppercase tracking-wider font-bold opacity-60">
-                    Langkah Taktis
+                <div className="space-y-2 mb-4">
+                  <h3 className="text-sm uppercase tracking-wider font-bold flex items-center gap-1.5">
+                    <IconFlame className="w-3.5 h-3.5" /> Tingkat Urgensi
+                  </h3>
+                  <div className="rounded-lg bg-background/10 order p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs font-semibold">{urgencyLabel}</p>
+                      <p className="text-[11px] opacity-70">{`${urgencyLevel}/10`}</p>
+                    </div>
+                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-green-400 rounded-full transition-all"
+                        style={{
+                          width: `${Math.min(Math.max(urgencyLevel, 0), 10) * 10}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  <h3 className="text-sm uppercase tracking-wider font-bold flex items-center gap-1.5">
+                    <IconShieldExclamation className="w-3.5 h-3.5" /> Potensi
+                    Risiko
                   </h3>
                   <ul className="space-y-2">
-                    {(typeof analysis.content === "string"
-                      ? JSON.parse(analysis.content).action_steps
-                      : analysis.content?.action_steps
-                    )?.map((step: string, idx: number) => (
-                      <li
-                        // biome-ignore lint/suspicious/noArrayIndexKey: it's fine for simple lists
-                        key={idx}
-                        className="text-xs flex gap-2 items-start bg-black/5 p-2 rounded"
-                      >
-                        <span className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-200 flex items-center justify-center flex-shrink-0 text-[10px] font-bold mt-0.5">
-                          {idx + 1}
-                        </span>
-                        <span className="opacity-90 leading-tight">{step}</span>
-                      </li>
-                    ))}
+                    {analysisContent?.potential_risks?.map(
+                      (risk: string, idx: number) => (
+                        <li
+                          // biome-ignore lint/suspicious/noArrayIndexKey: it's fine for simple lists
+                          key={idx}
+                          className="text-xs flex gap-2 items-start bg-background/10 p-2 rounded"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-yellow-300 mt-1.5 flex-shrink-0" />
+                          <span className="opacity-90 leading-tight">
+                            {risk}
+                          </span>
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-sm uppercase tracking-wider font-bold flex items-center gap-1.5">
+                    <IconListCheck className="w-3.5 h-3.5" /> Langkah Taktis
+                  </h3>
+                  <ul className="space-y-2">
+                    {analysisContent?.action_steps?.map(
+                      (step: string, idx: number) => (
+                        <li
+                          // biome-ignore lint/suspicious/noArrayIndexKey: it's fine for simple lists
+                          key={idx}
+                          className="text-xs flex gap-2 items-start bg-background/10 p-2 rounded"
+                        >
+                          <span className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-200 flex items-center justify-center flex-shrink-0 text-[10px] font-bold mt-0.5">
+                            {idx + 1}
+                          </span>
+                          <span className="opacity-90 leading-tight">
+                            {step}
+                          </span>
+                        </li>
+                      ),
+                    )}
                   </ul>
                 </div>
               </div>
