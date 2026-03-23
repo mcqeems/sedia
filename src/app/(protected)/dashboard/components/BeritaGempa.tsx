@@ -1,6 +1,12 @@
 "use client";
 
-import { IconChevronDown, IconPlus } from "@tabler/icons-react";
+import {
+  IconCalendarWeek,
+  IconChevronDown,
+  IconMapPin,
+  IconPlus,
+  IconRulerMeasure2,
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
 import getBeritaGempa, {
@@ -141,17 +147,19 @@ export default function BeritaGempa() {
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <div className="px-4 pb-4 pt-3 text-sm border-t border-white/10 bg-black/10 flex flex-col gap-3">
-                        <div className="flex flex-col gap-2 text-xs opacity-90 border-b border-white/10 pb-3">
+                      <div className="px-4 pb-4 pt-3 text-sm border-t border-foreground/25 bg-background/80 text-foreground flex flex-col gap-3">
+                        <div className="flex flex-col gap-2 text-xs opacity-90 border-b border-foreground/25 pb-3">
                           <span className="flex items-center gap-1">
-                            📏 Kedalaman: <b>{gempa.Kedalaman}</b>
+                            <IconRulerMeasure2 className="w-5 h-5" /> Kedalaman:{" "}
+                            <b>{gempa.Kedalaman}</b>
                           </span>
                           <span className="flex items-center gap-1">
-                            📍 Koordinat: <b>{gempa.Coordinates}</b> (Lintang:{" "}
-                            {gempa.Lintang}, Bujur: {gempa.Bujur})
+                            <IconMapPin className="w-5 h-5" /> Koordinat:{" "}
+                            <b>{gempa.Coordinates}</b> (Lintang: {gempa.Lintang}
+                            , Bujur: {gempa.Bujur})
                           </span>
                           <span className="flex items-center gap-1">
-                            📅 Waktu:{" "}
+                            <IconCalendarWeek className="w-5 h-5" /> Waktu:{" "}
                             <b>
                               {new Intl.DateTimeFormat("id-ID", {
                                 weekday: "long",
@@ -165,7 +173,7 @@ export default function BeritaGempa() {
                             </b>
                           </span>
                         </div>
-                        <div className="opacity-95 leading-relaxed text-left text-primary-foreground/90">
+                        <div className="opacity-95 leading-relaxed text-left text-foreground">
                           <span className="font-bold text-xs opacity-80 block mb-1">
                             Dirasakan (Skala MMI):
                           </span>
