@@ -17,7 +17,10 @@ export default function BeritaPeringatanCuaca() {
     const fetchPeringatan = async () => {
       const response = await getPeringatanCuaca();
       setPeringatanCuaca(response);
-      dispatch({ type: "SET_STATE", payload: { peringatanCuaca: response } });
+      dispatch({
+        type: "SET_STATE",
+        payload: { peringatanCuaca: response[0] },
+      });
       setIsLoading(false);
     };
 

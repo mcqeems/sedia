@@ -11,7 +11,7 @@ interface DashboardContents {
   latitude: string | undefined;
   longitude: string | undefined;
   gempaInfo: EarthquakeData | undefined;
-  peringatanCuaca: WeatherAlert[] | undefined;
+  peringatanCuaca: WeatherAlert | undefined;
 }
 
 interface Status {
