@@ -41,7 +41,7 @@ export default function BeritaGempa() {
 
   return (
     <div className="h-[180px] w-full rounded-lg bg-primary p-4 text-primary-foreground md:max-w-[50%]">
-      <h3>Berita Gempa Terkini</h3>
+      <h3>Gempa Yang Dirasakan Terakhir</h3>
       <div className="md:mt-2 mt-3 flex flex-col items-center gap-2">
         {recentGempa && (
           <div className="w-full h-full flex flex-row items-center px-3 py-3 bg-background/10 hover:bg-background/20 transition-colors rounded-lg gap-4">
