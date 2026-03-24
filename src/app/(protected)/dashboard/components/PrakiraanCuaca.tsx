@@ -1,6 +1,6 @@
 "use client";
 
-import { IconDroplet } from "@tabler/icons-react";
+import { IconDroplet, IconMoodSad } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -62,8 +62,12 @@ export default function PrakiraanCuaca() {
       <h3 className="font-bold mb-2">Prakiraan Cuaca 3 Hari Kedepan</h3>
 
       {!predictionData?.data?.[0]?.cuaca ? (
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-sm opacity-80">Data tidak tersedia</p>
+        <div className="flex-1 flex flex-col items-center justify-center gap-2">
+          <IconMoodSad className="w-12 h-12 opacity-80" />
+          <p className="text-sm opacity-80 w-full max-w-xs text-center">
+            Mohon maaf atas ketidaknyamanan ini, Harap tunggu beberapa saat
+            lagi.
+          </p>
         </div>
       ) : (
         <div className="flex-1 flex flex-col justify-around gap-2 overflow-y-auto custom-scrollbar relative">

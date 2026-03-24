@@ -43,7 +43,9 @@ export default function ChatComposer({
         </button>
       </div>
       {error ? (
-        <p className="mx-auto mt-2 max-w-3xl text-xs text-red-500">{error}</p>
+        <p className="mx-auto mt-2 text-center max-w-3xl text-xs text-red-500">
+          {error}
+        </p>
       ) : null}
     </footer>
   );

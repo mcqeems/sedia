@@ -1,6 +1,7 @@
 "use client";
 import {
   IconMapPin,
+  IconMoodSad,
   IconRipple,
   IconRulerMeasure2,
   IconWorldLatitude,
@@ -42,8 +43,12 @@ export default function GempaBumi() {
   return (
     <div className="h-[125px] w-full rounded-lg bg-primary p-4 text-primary-foreground shadow-xl flex flex-col justify-between overflow-hidden">
       {!gempa ? (
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-sm opacity-80">Data tidak tersedia</p>
+        <div className="flex-1 flex flex-col gap-2 items-center justify-center">
+          <IconMoodSad className="w-12 h-12 opacity-80" />
+          <p className="text-sm opacity-80 w-full max-w-xs text-center">
+            Mohon maaf atas ketidaknyamanan ini, Harap tunggu beberapa saat
+            lagi.
+          </p>{" "}
         </div>
       ) : (
         <>
