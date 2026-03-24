@@ -8,7 +8,7 @@ export default function HeaderPage({
   description: string;
 }) {
   return (
-    <section className="w-full px-2 py-4 gap-0 md:gap-1 flex flex-col justify-center items-center rounded-2xl relative overflow-hidden">
+    <section className="w-full px-2 py-4 gap-0 md:gap-1 bg-primary/20 flex flex-col justify-center items-center rounded-2xl relative overflow-hidden">
       <h1 className="text-3xl text-center">{title}</h1>
       <p className="text-muted-foreground text-center font-medium md:text-base text-sm">
         {description}
