@@ -200,7 +200,7 @@ export default function Navbar() {
         onDragEnd={updateMobileRevealDirection}
         style={{ x, y }}
         className={`pointer-events-auto absolute rounded-4xl md:px-3.5 md:py-4 px-2 py-2 overflow-hidden bg-primary/80 shadow-2xl cursor-grab active:cursor-grabbing transition-shadow duration-200 ease-out ${isMobileMenuOpen ? (mobileRevealDirection === "down" ? "pb-0" : "pt-0") : ""} ${isPositioned ? "opacity-100" : "opacity-0"}`}
-        title="This navbar is draggable."
+        title="Navbar ini bisa dipindah."
       >
         <Image
           loading="eager"
@@ -216,16 +216,18 @@ export default function Navbar() {
             const Icon = nav.icon;
 
             return (
-              <button
+              <motion.button
                 key={nav.name}
                 type="button"
                 onClick={() => handleNavAction(nav.action)}
                 title={nav.title}
                 aria-label={nav.name}
-                className={`rounded-full p-2 ${pathname === `/${nav.name.toLowerCase()}` ? "bg-background/80 hover:bg-background/90" : "bg-background/0 hover:bg-background/30"} cursor-pointer drop-shadow-2xl shadow-2xl transition hover:scale-110 border border-background/10`}
+                className={`rounded-full p-2 ${pathname === `/${nav.name.toLowerCase()}` ? "bg-background/80 hover:bg-background/90" : "bg-background/0 hover:bg-background/30"} transition-all ease-out cursor-pointer drop-shadow-2xl shadow-2xl border border-background/10`}
+                whileTap={{ scale: 1.2 }}
+                whileHover={{ scale: 1.1 }}
               >
                 <Icon className="w-6 h-6 text-foreground/60 antialiased" />
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -331,7 +333,7 @@ export default function Navbar() {
                       delay: isMobileMenuOpen ? staggerIndex * 0.04 : 0,
                       duration: 0.18,
                     }}
-                    className={`rounded-full p-2 ${pathname === `/${nav.name.toLowerCase()}` ? "bg-background/80 border-foreground/40" : "bg-transparent border-background/20 hover:border-background/35"} cursor-pointer drop-shadow-2xl shadow-2xl transition hover:scale-110 ${isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+                    className={`rounded-full p-2 ${pathname === `/${nav.name.toLowerCase()}` ? "bg-background/80 border-foreground/40" : "bg-transparent border-background/20 hover:border-background/35"} cursor-pointer drop-shadow-2xl shadow-2xl ${isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"}`}
                   >
                     <Icon className="w-6 h-6 text-foreground/60 antialiased" />
                   </motion.button>
