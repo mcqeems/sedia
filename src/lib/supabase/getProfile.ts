@@ -1,6 +1,7 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 
-interface GetProfile {
+export interface GetProfile {
   display_location?: string;
   provinsi?: string;
   kabupaten?: string;
@@ -11,14 +12,24 @@ interface GetProfile {
   longitude?: string;
 }
 
-export default async function getProfile() {
-  const supabase = createClient();
+type GetProfileOptions = {
+  userId?: string;
+  supabase?: SupabaseClient;
+};
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default async function getProfile(options: GetProfileOptions = {}) {
+  const supabase = options.supabase ?? createClient();
+  let userId = options.userId;
 
-  if (!user?.id) {
+  if (!userId) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    userId = user?.id;
+  }
+
+  if (!userId) {
     return {} as GetProfile;
   }
 
@@ -27,7 +38,7 @@ export default async function getProfile() {
     .select(
       "display_location, provinsi, kabupaten, kecamatan, kelurahan, adm_4, langitude, longitude",
     )
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .single();
 
   if (error) {
