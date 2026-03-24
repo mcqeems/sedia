@@ -16,8 +16,8 @@ export default function ChatComposer({
   onSend,
 }: ChatComposerProps) {
   return (
-    <footer className="border-t border-black/10 bg-white p-3">
-      <div className="mx-auto flex max-w-3xl items-end gap-2 rounded-2xl border border-slate-300 bg-slate-50 p-2">
+    <footer className="bg-transparent p-2">
+      <div className="mx-auto flex max-w-3xl justify-center items-center gap-2 rounded-4xl border border-slate-50 bg-slate-100 p-1 drop-shadow-sm">
         <textarea
           rows={1}
           value={draft}
@@ -31,13 +31,13 @@ export default function ChatComposer({
             }
           }}
           placeholder="Tulis pesan Anda..."
-          className="max-h-48 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm outline-none"
+          className="flex-1 resize-none text-slate-700 bg-transparent px-2 py-2 text-sm outline-none"
         />
         <button
           type="button"
           disabled={!canSend}
           onClick={onSend}
-          className="rounded-xl bg-primary p-2 text-white transition disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-full bg-primary p-2 text-white transition disabled:cursor-not-allowed disabled:opacity-40"
         >
           <IconSend2 className="h-5 w-5" />
         </button>

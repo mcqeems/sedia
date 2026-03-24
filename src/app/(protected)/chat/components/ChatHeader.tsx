@@ -21,7 +21,7 @@ export default function ChatHeader({
         type="button"
         onClick={onReset}
         disabled={isResetDisabled}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex cursor-pointer text-slate-600 items-center hover:bg-slate-200 transition-colors ease-out gap-1.5 rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
       >
         <IconMessageCirclePlus className="h-4 w-4" /> Reset Chat
       </button>

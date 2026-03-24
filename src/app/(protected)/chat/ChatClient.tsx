@@ -9,7 +9,6 @@ import {
   type Message,
   resetConversationAction,
 } from "./actions";
-import ChatComposer from "./components/ChatComposer";
 import ChatHeader from "./components/ChatHeader";
 import ChatMessages from "./components/ChatMessages";
 import type { LocalMessage } from "./components/types";
@@ -38,6 +37,7 @@ export default function ChatClient({
   const [isResetting, setIsResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [isMessages, setIsMessages] = useState(true);
 
   const canSend = useMemo(
     () => draft.trim().length > 0 && !isStreaming,
@@ -171,6 +171,9 @@ export default function ChatClient({
       setError("Pesan gagal diproses. Silakan coba lagi.");
     } finally {
       setIsStreaming(false);
+      if (messages) {
+        setIsMessages(false);
+      }
       scrollToBottom();
     }
   };
@@ -181,17 +184,17 @@ export default function ChatClient({
         title="Sedia AI Chat"
         description="Sedia AI hadir untukmu dimanapun dan kapanpun."
       />
-      <section className="flex h-[calc(100dvh-7.5rem)] mt-1 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-black/10 bg-slate-50 text-slate-900 md:h-[calc(100dvh-9rem)]">
+      <section className="flex h-[calc(100dvh-6.5rem)] mt-1 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-black/10 bg-slate-50 text-slate-900 md:h-[calc(100dvh-9rem)]">
         <ChatHeader
           onReset={() => {
             void handleResetConversation();
           }}
-          isResetDisabled={isResetting || isStreaming}
+          isResetDisabled={isResetting || isStreaming || isMessages}
         />
 
-        <ChatMessages messages={messages} bottomRef={bottomRef} />
-
-        <ChatComposer
+        <ChatMessages
+          messages={messages}
+          bottomRef={bottomRef}
           draft={draft}
           setDraft={setDraft}
           canSend={canSend}
