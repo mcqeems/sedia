@@ -37,7 +37,8 @@ export default function ChatClient({
   const [isResetting, setIsResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const [isMessages, setIsMessages] = useState(true);
+
+  const hasMessages = messages.length > 0;
 
   const canSend = useMemo(
     () => draft.trim().length > 0 && !isStreaming,
@@ -171,9 +172,6 @@ export default function ChatClient({
       setError("Pesan gagal diproses. Silakan coba lagi.");
     } finally {
       setIsStreaming(false);
-      if (messages) {
-        setIsMessages(false);
-      }
       scrollToBottom();
     }
   };
@@ -189,7 +187,7 @@ export default function ChatClient({
           onReset={() => {
             void handleResetConversation();
           }}
-          isResetDisabled={isResetting || isStreaming || isMessages}
+          isResetDisabled={isResetting || isStreaming || !hasMessages}
         />
 
         <ChatMessages
