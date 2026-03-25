@@ -47,8 +47,8 @@ export default function Navbar() {
             <Logo />
           </motion.a>
           <div className="hidden md:flex flex-row gap-4 font-normal text-[15px] tracking-wider text-slate-600 justify-center items-center">
-            <ItemNav link="/#fitur">Fitur</ItemNav>
             <ItemNav link="/#tentang">Tentang</ItemNav>
+            <ItemNav link="/#fitur">Fitur</ItemNav>
             <ItemNav link="/#faq">FAQ</ItemNav>
 
             <motion.a

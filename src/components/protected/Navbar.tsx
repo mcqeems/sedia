@@ -194,12 +194,13 @@ export default function Navbar() {
         dragConstraints={constraintsRef}
         dragElastic={0.5}
         dragMomentum={true}
-        whileDrag={{ scale: 1.05 }}
-        transition={{ type: "spring" }}
+        // whileDrag={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 200, damping: 13 }}
         dragTransition={{ power: 0.2 }}
         onDragEnd={updateMobileRevealDirection}
         style={{ x, y }}
-        className={`pointer-events-auto absolute rounded-4xl md:px-3.5 md:py-4 px-2 py-2 overflow-hidden bg-primary/80 shadow-2xl cursor-grab active:cursor-grabbing transition-shadow duration-200 ease-out ${isMobileMenuOpen ? (mobileRevealDirection === "down" ? "pb-0" : "pt-0") : ""} ${isPositioned ? "opacity-100" : "opacity-0"}`}
+        className={`pointer-events-auto absolute rounded-4xl md:px-3.5 md:py-4 px-2 py-2 overflow-hidden bg-primary/80 drop-shadow-xl/25 cursor-grab active:cursor-grabbing transition-shadow duration-200 ease-out ${isMobileMenuOpen ? (mobileRevealDirection === "down" ? "pb-0" : "pt-0") : ""} ${isPositioned ? "opacity-100" : "opacity-0"}`}
         title="Navbar ini bisa dipindah."
       >
         <Image
