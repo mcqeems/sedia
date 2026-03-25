@@ -188,7 +188,7 @@ export default function AiAnalysis() {
               <div className="flex flex-row items-center gap-1">
                 <p className="text-sm font-bold opacity-90 mb-1">Status:</p>
                 <div
-                  className={`flex justify-center items-center gap-1 px-2 ${analysis.status === "Aman" ? "bg-background/10 " : analysis.status === "Waspada" ? "bg-yellow-200" : "bg-red-200"} bg-background/10 rounded-2xl`}
+                  className={`flex justify-center items-center gap-1 px-2 ${analysis.status === "Aman" ? "bg-background/10 " : analysis.status === "Waspada" ? "bg-yellow-400" : "bg-red-400"} bg-background/10 rounded-2xl`}
                 >
                   {analysis.status === "Aman" ? (
                     <IconCheck className="w-4 h-4" />
@@ -233,7 +233,7 @@ export default function AiAnalysis() {
                 <div className="flex flex-row items-center gap-1">
                   <p className="text-sm font-bold opacity-90 mb-1">Status:</p>
                   <div
-                    className={`flex justify-center items-center gap-1 px-2 ${analysis.status === "Aman" ? "bg-background/10 " : analysis.status === "Waspada" ? "bg-yellow-200" : "bg-red-200"} bg-background/10 rounded-2xl`}
+                    className={`flex justify-center items-center gap-1 px-2 ${analysis.status === "Aman" ? "bg-background/10 " : analysis.status === "Waspada" ? "bg-yellow-400" : "bg-red-400"} bg-background/10 rounded-2xl`}
                   >
                     {analysis.status === "Aman" ? (
                       <IconCheck className="w-4 h-4" />
