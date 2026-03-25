@@ -24,7 +24,7 @@ export function ItemNav({
 
 export default function Navbar() {
   return (
-    <nav className="sticky p-2">
+    <nav className="fixed top-0 left-0 right-0 z-100 md:px-2 md:py-4 p-1">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}

@@ -10,7 +10,7 @@ export default function HomeLayout({
       <header>
         <Navbar />
       </header>
-      <main>{children}</main>
+      <main className="mt-24">{children}</main>
     </>
   );
 }
