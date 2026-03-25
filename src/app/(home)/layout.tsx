@@ -10,7 +10,7 @@ export default function HomeLayout({
       <header>
         <Navbar />
       </header>
-      <main className="mt-24">{children}</main>
+      <main className="mt-24 w-full max-w-6xl mx-auto">{children}</main>
     </>
   );
 }

@@ -49,6 +49,7 @@ export default function Hero() {
     show: {
       opacity: 1,
       y: 0,
+
       transition: {
         type: "spring",
         stiffness: 200,
@@ -60,7 +61,7 @@ export default function Hero() {
   } as const;
 
   return (
-    <section className="w-full max-w-6xl py-4 px-1 mx-auto md:pt-16">
+    <section className="py-4 px-1 md:pt-16">
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -83,6 +84,9 @@ export default function Hero() {
           </motion.p>
           <motion.a
             variants={badgeVariants}
+            whileHover={{ scale: 1.05, backgroundColor: "#4a83fe" }}
+            whileTap={{ scale: 0.9, backgroundColor: "#3b61b1" }}
+            transition={{ type: "spring", stiffness: 300, damping: 15 }}
             href="https://data.bmkg.go.id/"
             className="flex gap-2 justify-center items-center font-medium text-sm bg-primary px-2 py-2 max-w-[225px] w-full rounded-full text-background"
           >
@@ -112,29 +116,38 @@ export default function Hero() {
               ease: "easeOut",
             },
           }}
-          className="bg-primary drop-shadow-md/20 rounded-full px-6 py-2 font-medium text-sm text-center absolute -bottom-5 left-1/2 transform -translate-x-1/2 flex flex-row gap-2 z-100"
+          whileHover={{ scale: 1.05, backgroundColor: "#4a83fe" }}
+          transition={{ type: "spring", stiffness: 300, damping: 15 }}
+          className="bg-primary drop-shadow-md/20 rounded-full px-6 py-2 font-medium text-sm text-center absolute -bottom-5 left-1/2 transform -translate-x-1/2 flex flex-row gap-3 z-100"
         >
-          <Image
-            alt="logo-bmkg"
-            src="/logo/logo_bmkg.png"
-            className="rounded-full bg-background"
-            height={24}
-            width={24}
-          />
-          <Image
-            alt="logo-open-weather"
-            src="/logo/openweather_logo.png"
-            className="rounded-full bg-background"
-            height={24}
-            width={24}
-          />
-          <Image
-            alt="logo-gemini"
-            src="/logo/gemini_logo.png"
-            className="rounded-full bg-background"
-            height={24}
-            width={24}
-          />
+          <motion.div className="px-1" whileHover={{ scale: 1.2, y: -10 }}>
+            <Image
+              alt="logo-bmkg"
+              src="/logo/logo_bmkg.png"
+              className="rounded-full bg-background"
+              height={24}
+              width={24}
+            />
+          </motion.div>
+          <motion.div className="px-1" whileHover={{ scale: 1.2, y: -10 }}>
+            {" "}
+            <Image
+              alt="logo-open-weather"
+              src="/logo/openweather_logo.png"
+              className="rounded-full bg-background"
+              height={24}
+              width={24}
+            />
+          </motion.div>
+          <motion.div className="px-1" whileHover={{ scale: 1.2, y: -10 }}>
+            <Image
+              alt="logo-gemini"
+              src="/logo/gemini_logo.png"
+              className="rounded-full bg-background"
+              height={24}
+              width={24}
+            />
+          </motion.div>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 75 }}
@@ -158,7 +171,7 @@ export default function Hero() {
             loop
             playsInline
             preload="metadata"
-            className="block h-[200px] w-full object-cover md:h-[500px] opacity-100 md:opacity-75"
+            className="block h-[200px] w-full object-cover md:h-[550px] opacity-100 md:opacity-75"
             disablePictureInPicture
             aria-label="Blue ambient background video"
           >

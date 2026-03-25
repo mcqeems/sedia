@@ -1,3 +1,3 @@
 export default function Tentang() {
-  return <div className="h-[500px]"></div>;
+  return <section id="tentang" className="px-1 py-4 mt-12"></section>;
 }
