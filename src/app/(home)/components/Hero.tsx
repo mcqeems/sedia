@@ -108,7 +108,7 @@ export default function Hero() {
             opacity: 1,
             y: 0,
             transition: {
-              delay: 1.3,
+              delay: 2,
               type: "spring",
               stiffness: 200,
               damping: 12,
@@ -155,10 +155,10 @@ export default function Hero() {
             opacity: 1,
             y: 0,
             transition: {
-              delay: 1,
-              type: "spring",
-              stiffness: 200,
-              damping: 12,
+              delay: 1.5,
+              // type: "spring",
+              // stiffness: 200,
+              // damping: 12,
               duration: 0.8,
               ease: "easeOut",
             },
