@@ -127,6 +127,7 @@ export default function Hero() {
               className="rounded-full bg-background"
               height={24}
               width={24}
+              title="Badan Meteorologi, Klimatologi, dan Geofisika"
             />
           </motion.div>
           <motion.div className="px-1" whileHover={{ scale: 1.2, y: -10 }}>
@@ -137,6 +138,7 @@ export default function Hero() {
               className="rounded-full bg-background"
               height={24}
               width={24}
+              title="Open Weather"
             />
           </motion.div>
           <motion.div className="px-1" whileHover={{ scale: 1.2, y: -10 }}>
@@ -146,6 +148,7 @@ export default function Hero() {
               className="rounded-full bg-background"
               height={24}
               width={24}
+              title="Gemini"
             />
           </motion.div>
         </motion.div>
