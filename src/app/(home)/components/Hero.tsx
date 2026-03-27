@@ -118,7 +118,7 @@ export default function Hero() {
           }}
           whileHover={{ scale: 1.05, backgroundColor: "#4a83fe" }}
           transition={{ type: "spring", stiffness: 300, damping: 15 }}
-          className="bg-primary drop-shadow-md/20 rounded-full px-6 py-2 font-medium text-sm text-center absolute -bottom-5 left-1/2 transform -translate-x-1/2 flex flex-row gap-3 z-100"
+          className="bg-primary drop-shadow-md/20 rounded-full px-6 py-2 font-medium text-sm text-center absolute -bottom-5 left-1/2 transform -translate-x-1/2 flex flex-row gap-3 z-50"
         >
           <motion.div className="px-1" whileHover={{ scale: 1.2, y: -10 }}>
             <Image
