@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html className="overflow-x-hidden md:overflow-x-visible" lang="en">
       <body className="antialiased">{children}</body>
     </html>
   );

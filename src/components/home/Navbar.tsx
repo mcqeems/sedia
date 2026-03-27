@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import type React from "react";
 import Logo from "../Logo";
+import NavbarMobile from "./NavbarMobile";
 
 export function ItemNav({
   children,
@@ -24,9 +25,9 @@ export function ItemNav({
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-100 md:px-2 md:py-4 p-1">
+    <nav className="fixed inset-x-0 top-0 z-100 overflow-x-clip md:px-2 md:py-4 py-1 px-0">
       <motion.div
-        initial={{ opacity: 0, y: -50 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{
           type: "spring",
@@ -34,9 +35,9 @@ export default function Navbar() {
           damping: 12,
           duration: 0.8,
         }}
-        className="max-w-6xl border border-slate-200 bg-background rounded-full mx-auto md:py-2 md:px-6 py-1.5 px-0.5"
+        className="box-border w-[calc(100%-0.5rem)] max-w-6xl border border-slate-200 bg-background rounded-full mx-auto md:py-2 md:px-6 py-1.5 px-2"
       >
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between items-center">
           <motion.a
             whileHover={{ scale: 1.05, color: "#4a83fe" }}
             whileTap={{ scale: 0.9, color: "#3b61b1" }}
@@ -46,6 +47,9 @@ export default function Navbar() {
           >
             <Logo />
           </motion.a>
+          <div className="md:hidden block">
+            <NavbarMobile />
+          </div>
           <div className="hidden md:flex flex-row gap-4 font-normal text-[15px] tracking-wider text-slate-600 justify-center items-center">
             <ItemNav link="/#tentang">Tentang</ItemNav>
             <ItemNav link="/#fitur">Fitur</ItemNav>
