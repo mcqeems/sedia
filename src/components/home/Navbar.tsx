@@ -27,7 +27,7 @@ export default function Navbar() {
   return (
     <nav className="fixed inset-x-0 top-0 z-100 overflow-x-clip md:px-2 md:py-4 py-1 px-0">
       <motion.div
-        initial={false}
+        initial={{ opacity: 0, y: -100 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
           type: "spring",

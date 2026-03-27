@@ -77,7 +77,7 @@ export default function Tentang() {
           <AnimatedUnderlineText
             textClassName="text-primary"
             underlineClassName="bg-primary"
-            delay={0.6}
+            delay={0.2}
           >
             memantau kondisi
           </AnimatedUnderlineText>{" "}
@@ -85,7 +85,7 @@ export default function Tentang() {
           <AnimatedUnderlineText
             textClassName="text-green-500"
             underlineClassName="bg-green-500"
-            delay={0.8}
+            delay={0.4}
           >
             prakiraan cuaca
           </AnimatedUnderlineText>
@@ -93,7 +93,7 @@ export default function Tentang() {
           <AnimatedUnderlineText
             textClassName="text-pink-500"
             underlineClassName="bg-pink-500"
-            delay={1}
+            delay={0.6}
           >
             data curah hujan
           </AnimatedUnderlineText>
@@ -101,7 +101,7 @@ export default function Tentang() {
           <AnimatedUnderlineText
             textClassName="text-red-500"
             underlineClassName="bg-red-500"
-            delay={1.2}
+            delay={0.8}
           >
             peringatan dini bencana
           </AnimatedUnderlineText>
@@ -109,12 +109,39 @@ export default function Tentang() {
           <AnimatedUnderlineText
             textClassName="text-yellow-500"
             underlineClassName="bg-yellow-500"
-            delay={1.4}
+            delay={1}
           >
             rekomendasi tindakan
           </AnimatedUnderlineText>{" "}
           berdasarkan analisis AI.
         </motion.span>
+      </div>
+      <div className="md:text-end text-start mt-8 md:mt-12 flex flex-col md:items-end items-center gap-2">
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          style={{ originX: 0 }}
+          transition={{
+            delay: 1.2,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          viewport={{ once: true }}
+          className="h-0.5 bg-slate-300 w-full max-w-xs"
+        ></motion.div>
+        <motion.p
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 1.2,
+            type: "spring",
+            duration: 0.8,
+          }}
+          viewport={{ once: true }}
+          className="text-slate-700"
+        >
+          Sedia aku, Sebelum bencana.
+        </motion.p>
       </div>
     </section>
   );
