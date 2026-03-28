@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import HeaderPage from "@/components/protected/HeaderPage";
 import Inside from "./components/Inside";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default function Dashboard() {
   return (

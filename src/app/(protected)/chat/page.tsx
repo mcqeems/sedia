@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import {
   getConversationsAction,
   getMessagesAction,
 } from "@/app/(protected)/chat/actions";
 import ChatClient from "@/app/(protected)/chat/ChatClient";
+
+export const metadata: Metadata = {
+  title: "Chat",
+};
 
 export default async function Chat() {
   const conversations = await getConversationsAction();
