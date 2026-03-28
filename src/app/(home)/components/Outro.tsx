@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import Image from "next/image";
+import Logo from "@/components/Logo";
 
 export default function Outro() {
   return (
@@ -44,6 +45,37 @@ export default function Outro() {
             className="object-cover object-center opacity-75"
             sizes="(min-width: 768px) 50vw, 100vw"
           />
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 100, scaleY: 0.5 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          scaleY: 1,
+          transition: {
+            delay: 0.4,
+            type: "spring",
+            stiffness: 150,
+            damping: 8,
+            duration: 1,
+          },
+        }}
+        whileHover={{
+          scale: 1.05,
+          transition: {
+            type: "spring",
+            stiffness: 150,
+            damping: 8,
+            duration: 0.8,
+          },
+        }}
+        viewport={{ once: true }}
+        className="py-16"
+      >
+        <div className="max-w-[1000px] mx-auto">
+          <Logo className="text-primary" />
         </div>
       </motion.div>
     </section>
