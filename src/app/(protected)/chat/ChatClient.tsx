@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import HeaderPage from "@/components/protected/HeaderPage";
+import Loader from "@/components/protected/Loader";
 import {
   type Conversation,
   createConversationAction,
+  getConversationsAction,
   getMessagesAction,
   type Message,
   resetConversationAction,
@@ -13,25 +15,11 @@ import ChatHeader from "./components/ChatHeader";
 import ChatMessages from "./components/ChatMessages";
 import type { LocalMessage } from "./components/types";
 
-type ChatClientProps = {
-  initialConversation: Conversation | null;
-  initialMessages: Message[];
-};
-
-export default function ChatClient({
-  initialConversation,
-  initialMessages,
-}: ChatClientProps) {
+export default function ChatClient() {
+  const [isLoadingInitial, setIsLoadingInitial] = useState(true);
   const [activeConversation, setActiveConversation] =
-    useState<Conversation | null>(initialConversation);
-  const [messages, setMessages] = useState<LocalMessage[]>(
-    initialMessages.map((message) => ({
-      id: message.id,
-      role: message.role,
-      content: message.content,
-      created_at: message.created_at,
-    })),
-  );
+    useState<Conversation | null>(null);
+  const [messages, setMessages] = useState<LocalMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
@@ -39,6 +27,45 @@ export default function ChatClient({
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const hasMessages = messages.length > 0;
+
+  useEffect(() => {
+    const loadInitialChat = async () => {
+      setIsLoadingInitial(true);
+      setError(null);
+
+      try {
+        const conversations = await getConversationsAction();
+        const firstConversation = conversations[0] ?? null;
+
+        setActiveConversation(firstConversation);
+
+        if (!firstConversation?.id) {
+          setMessages([]);
+          return;
+        }
+
+        const initialMessages: Message[] = await getMessagesAction(
+          firstConversation.id,
+        );
+
+        setMessages(
+          initialMessages.map((message) => ({
+            id: message.id,
+            role: message.role,
+            content: message.content,
+            created_at: message.created_at,
+          })),
+        );
+      } catch (initialLoadError) {
+        console.error(initialLoadError);
+        setError("Gagal memuat riwayat chat.");
+      } finally {
+        setIsLoadingInitial(false);
+      }
+    };
+
+    void loadInitialChat();
+  }, []);
 
   const canSend = useMemo(
     () => draft.trim().length > 0 && !isStreaming,
@@ -182,25 +209,33 @@ export default function ChatClient({
         title="Sedia AI Chat"
         description="Sedia AI hadir untukmu dimanapun dan kapanpun."
       />
-      <section className="flex h-[calc(100dvh-6.5rem)] mt-1 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-black/10 bg-slate-50 text-slate-900 md:h-[calc(100dvh-9rem)]">
-        <ChatHeader
-          onReset={() => {
-            void handleResetConversation();
-          }}
-          isResetDisabled={isResetting || isStreaming || !hasMessages}
-        />
+      <section className="mt-1 flex h-[calc(100dvh-6.5rem)] min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-black/10 bg-slate-50 text-slate-900 md:h-[calc(100dvh-9rem)]">
+        {isLoadingInitial ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <Loader />
+          </div>
+        ) : (
+          <>
+            <ChatHeader
+              onReset={() => {
+                void handleResetConversation();
+              }}
+              isResetDisabled={isResetting || isStreaming || !hasMessages}
+            />
 
-        <ChatMessages
-          messages={messages}
-          bottomRef={bottomRef}
-          draft={draft}
-          setDraft={setDraft}
-          canSend={canSend}
-          error={error}
-          onSend={() => {
-            void handleSend();
-          }}
-        />
+            <ChatMessages
+              messages={messages}
+              bottomRef={bottomRef}
+              draft={draft}
+              setDraft={setDraft}
+              canSend={canSend}
+              error={error}
+              onSend={() => {
+                void handleSend();
+              }}
+            />
+          </>
+        )}
       </section>
     </div>
   );
