@@ -24,11 +24,11 @@ export default function SignInPage() {
 
   return (
     <AuthContainer
-      title="Welcome back"
-      description="Sign in to your account with your email and password."
-      footerText="Don't have an account?"
+      title="Selamat datang kembali"
+      description="Masuk ke akun Anda menggunakan email dan kata sandi."
+      footerText="Belum punya akun?"
       footerLink="/sign-up"
-      footerLinkText="Sign up"
+      footerLinkText="Daftar"
     >
       <form className="mt-8 space-y-4" action={formAction}>
         <AuthInput
@@ -36,7 +36,7 @@ export default function SignInPage() {
           name="email"
           type="email"
           label="Email"
-          placeholder="you@example.com"
+          placeholder="kamu@email.com"
           autoComplete="email"
           required
         />
@@ -44,12 +44,12 @@ export default function SignInPage() {
           id="password"
           name="password"
           type="password"
-          label="Password"
+          label="Kata Sandi"
           autoComplete="current-password"
           required
         />
 
-        <AuthSubmitButton idleText="Sign in" pendingText="Signing in..." />
+        <AuthSubmitButton idleText="Masuk" pendingText="Sedang masuk..." />
       </form>
 
       <AuthMessage state={state} />

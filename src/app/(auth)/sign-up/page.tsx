@@ -24,18 +24,18 @@ export default function SignUpPage() {
 
   return (
     <AuthContainer
-      title="Create your account"
-      description="Sign up with email and password using Supabase Auth."
-      footerText="Already have an account?"
+      title="Buat akun Anda"
+      description="Daftar dengan email dan kata sandi anda."
+      footerText="Sudah punya akun?"
       footerLink="/sign-in"
-      footerLinkText="Sign in"
+      footerLinkText="Masuk"
     >
       <form className="mt-8 space-y-4" action={formAction}>
         <AuthInput
           id="first-name"
           name="first-name"
           type="text"
-          label="First Name"
+          label="Nama Depan"
           placeholder="John"
           autoComplete="given-name"
           required
@@ -44,7 +44,7 @@ export default function SignUpPage() {
           id="last-name"
           name="last-name"
           type="text"
-          label="Last Name"
+          label="Nama Belakang"
           placeholder="Doe"
           autoComplete="family-name"
         />
@@ -53,7 +53,7 @@ export default function SignUpPage() {
           name="email"
           type="email"
           label="Email"
-          placeholder="you@example.com"
+          placeholder="john.doe@email.com"
           autoComplete="email"
           required
         />
@@ -61,26 +61,22 @@ export default function SignUpPage() {
           id="password"
           name="password"
           type="password"
-          label="Password"
-          placeholder="At least 6 characters"
+          label="Kata Sandi"
+          placeholder="Minimal 6 karakter"
           autoComplete="new-password"
           required
           minLength={6}
         />
 
         <AuthSubmitButton
-          idleText="Sign up"
-          pendingText="Creating account..."
+          idleText="Daftar"
+          pendingText="Sedang membuat akun..."
         />
       </form>
 
       <AuthMessage state={state} />
 
-      <p className="mt-4 text-xs text-zinc-500">
-        This form is set for no-verification signup. If you still get
-        confirmation-email related errors, disable Confirm email in Supabase
-        Auth settings.
-      </p>
+      <p className="mt-4 text-xs text-zinc-500">* Harus diisi.</p>
     </AuthContainer>
   );
 }

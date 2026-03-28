@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
+import Logo from "../Logo";
 
 export function AuthContainer({
   title,
@@ -19,13 +20,20 @@ export function AuthContainer({
 }) {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-12">
-      <h1 className="text-3xl font-semibold">{title}</h1>
-      <p className="mt-2 text-sm text-zinc-600">{description}</p>
+      <Link
+        href="/"
+        className="mb-4 py-2 flex justify-center text-primary hover:text-primary/75 hover:scale-110 transition-all"
+      >
+        <Logo className="h-12 w-32" />
+      </Link>
+
+      <h1 className="text-3xl font-semibold text-center">{title}</h1>
+      <p className="mt-2 text-sm text-zinc-600 text-center">{description}</p>
 
       {children}
 
       <div className="mt-6 flex flex-col gap-4 text-sm">
-        <p className="text-zinc-600">
+        <p className="text-zinc-600 text-center">
           {footerText}{" "}
           <Link
             href={footerLink}
@@ -34,8 +42,11 @@ export function AuthContainer({
             {footerLinkText}
           </Link>
         </p>
-        <Link href="/" className="text-zinc-600 hover:text-zinc-900">
-          Back to home
+        <Link
+          href="/"
+          className="text-zinc-600 hover:text-zinc-900 text-center"
+        >
+          Kembali ke beranda
         </Link>
       </div>
     </main>
@@ -64,7 +75,7 @@ export function AuthInput({
   return (
     <div>
       <label className="mb-1 block text-sm font-medium" htmlFor={id}>
-        {label}
+        {label} {required && "*"}
       </label>
       <input
         id={id}
@@ -93,7 +104,7 @@ export function AuthSubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-lg bg-zinc-900 px-4 py-2 font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-full rounded-lg bg-primary px-4 py-2 font-medium text-white shadow-sm transition duration-200 hover:scale-[1.01] hover:brightness-110 active:scale-[0.98] active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? pendingText : idleText}
     </button>
@@ -109,7 +120,7 @@ export function AuthMessage({
 
   return (
     <p
-      className={`mt-4 rounded-lg border px-3 py-2 text-sm ${
+      className={`mt-4 rounded-lg border px-3 py-2 text-sm text-center ${
         state.status === "error"
           ? "border-red-300 bg-red-50 text-red-700"
           : "border-emerald-300 bg-emerald-50 text-emerald-700"
