@@ -16,6 +16,7 @@ export default function Fitur() {
             duration: 0.8,
             ease: "easeOut",
           }}
+          viewport={{ once: true }}
           className="text-4xl text-slate-700"
         >
           Pantau Cuaca dan Hadapi Bencana dengan Cerdas
@@ -31,6 +32,7 @@ export default function Fitur() {
             duration: 0.8,
             ease: "easeOut",
           }}
+          viewport={{ once: true }}
           className="text-xl text-slate-600"
         >
           Sedia adalah aplikasi pintar yang membantu Anda memantau kondisi cuaca
@@ -52,7 +54,20 @@ export default function Fitur() {
       </div>
 
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 md:mt-12 mt-8">
-        <div className="relative flex-1 md:py-20 md:px-8 py-8 px-4 flex flex-col gap-4 justify-center items-center rounded-2xl overflow-hidden ">
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.4,
+            type: "spring",
+            stiffness: 200,
+            damping: 13,
+            duration: 1,
+            ease: "easeOut",
+          }}
+          viewport={{ once: true }}
+          className="relative flex-1 md:py-20 md:px-8 py-8 px-4 flex flex-col gap-4 justify-center items-center rounded-2xl overflow-hidden "
+        >
           <div className="absolute inset-0 z-[1] pointer-events-none">
             <Image
               src="/bg-card.png"
@@ -87,9 +102,22 @@ export default function Fitur() {
             width={200}
             height={200}
           />
-        </div>
-        <div className="flex-2 flex flex-col gap-4">
-          <div className="py-8 px-4 relative overflow-hidden rounded-2xl flex-1">
+        </motion.div>
+        <div className="flex-2 flex flex-col gap-4 mt-2 md:mt-0">
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.5,
+              type: "spring",
+              stiffness: 200,
+              damping: 13,
+              duration: 1,
+              ease: "easeOut",
+            }}
+            viewport={{ once: true }}
+            className="py-8 px-4 relative overflow-hidden rounded-2xl flex-1"
+          >
             <div className="absolute inset-0 -z-1 pointer-events-none">
               <Image
                 src="/bg-card.png"
@@ -116,8 +144,21 @@ export default function Fitur() {
                 merencanakan aktivitas dengan lebih baik.
               </p>
             </div>
-          </div>
-          <div className="py-8 px-4 relative overflow-hidden rounded-2xl flex-1">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.6,
+              type: "spring",
+              stiffness: 200,
+              damping: 13,
+              duration: 1,
+              ease: "easeOut",
+            }}
+            viewport={{ once: true }}
+            className="py-8 px-4 relative overflow-hidden rounded-2xl flex-1"
+          >
             <div className="absolute inset-0 -z-1 pointer-events-none">
               <Image
                 src="/bg-card.png"
@@ -144,7 +185,7 @@ export default function Fitur() {
                 dipersiapkan sebelum, saat, dan sesudah kondisi cuaca ekstrem.
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
