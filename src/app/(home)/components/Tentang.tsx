@@ -55,7 +55,7 @@ export default function Tentang() {
           damping: 12,
         }}
         viewport={{ once: true }}
-        className="text-2xl text-slate-700"
+        className="text-2xl text-slate-700 text-center md:text-start"
       >
         Tentang Sedia
       </motion.h2>
@@ -68,7 +68,7 @@ export default function Tentang() {
           ease: "easeInOut",
         }}
         viewport={{ once: true }}
-        className="h-0.5 bg-slate-300 w-full max-w-xs mt-2"
+        className="h-0.5 bg-slate-300 w-full max-w-xs mt-2 mx-auto md:mx-0"
       ></motion.div>
       <div className="w-full max-w-4xl mx-auto mt-8 md:text-7xl text-4xl md:leading-24 leading-14 px-4 md:px-0">
         <motion.span
