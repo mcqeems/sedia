@@ -68,6 +68,9 @@ export const metadata: Metadata = {
     },
   },
   category: "weather",
+  other: {
+    "dicoding:email": "mcqeemsofficial@gmail.com",
+  },
 };
 
 export default function RootLayout({
