@@ -36,7 +36,7 @@ export default function SignInPage() {
           name="email"
           type="email"
           label="Email"
-          placeholder="kamu@email.com"
+          placeholder="john.doe@email.com"
           autoComplete="email"
           required
         />
