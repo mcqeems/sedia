@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sedia
 
-## Getting Started
+<p align="center">
+	<img src="./public/logo/sedia_logo_primary.svg" alt="Logo Sedia" width="220" />
+</p>
 
-First, run the development server:
+Sedia adalah aplikasi pemantauan cuaca dan potensi bencana yang membantu pengguna mendapatkan informasi lokasi, prakiraan cuaca, peringatan dini, serta ringkasan analisis untuk mendukung kesiapsiagaan.
+
+## Gambaran Umum
+
+- Menampilkan kondisi cuaca terkini berdasarkan lokasi pengguna.
+- Menyediakan prakiraan cuaca beberapa hari ke depan.
+- Menampilkan informasi gempa dan berita terkait peringatan cuaca.
+- Mendukung pembaruan lokasi otomatis (GPS) maupun manual.
+- Menyediakan analisis berbasis AI sebagai panduan tambahan.
+
+## Fitur Utama
+
+- Dashboard cuaca dan bencana dengan data real-time.
+- Integrasi lokasi pengguna untuk hasil yang lebih relevan.
+- Komponen antarmuka interaktif dengan animasi ringan.
+- Halaman autentikasi untuk akses pengguna.
+
+## Tech Stack
+
+
+- Next.js (App Router)
+- React
+- TypeScript
+- Motion
+- Tailwind CSS
+- Supabase
+
+## Deploy Guide
+
+Ikuti langkah berikut untuk menjalankan aplikasi di komputer lokal.
+
+1. Install dependency:
+
+```bash
+npm install
+```
+
+2. Siapkan file environment:
+
+```bash
+cp .env.example .env.local
+```
+
+Jika file `.env.example` belum tersedia, buat `.env.local` lalu isi variabel yang dibutuhkan aplikasi, minimal:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+NEXT_PUBLIC_OPEN_WEATHER_API_KEY=
+GEMINI_API_KEY=
+```
+
+3. Jalankan server development:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Buka di browser:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Catatan
+- Agar geolocation dapat berjalan pastikan jalankan next js dengan https.
+- Pastikan koneksi internet aktif untuk pengambilan data cuaca/bencana.
+- Untuk akurasi lokasi terbaik, aktifkan izin lokasi pada browser/perangkat.
