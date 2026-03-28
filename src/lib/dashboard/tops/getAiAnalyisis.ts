@@ -42,7 +42,7 @@ export default async function getAiAnalyisis({
 }: Prerequisites) {
   const ai = getAiInstance();
   const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.1-flash-lite-preview",
     contents: `
 ### ROLE
 Anda adalah Sistem Pakar Analisis Bencana (Disaster Analysis Engine). Tugas Anda adalah mensintesis data cuaca dan seismik real-time menjadi penilaian risiko yang akurat untuk pengguna.

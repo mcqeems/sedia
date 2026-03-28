@@ -9,7 +9,7 @@ export default async function getAdmCode(
   location: string | undefined,
 ): Promise<string> {
   const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.1-flash-lite-preview",
     contents: `berikan angka kode saja tanpa penjelasan apapun. contoh output: xx.xx.xx.xxxx. Instruksi: berikan saya kode adm 4 yang cocok dengan alamat ini ${location} sesuai dengan Keputusan Menteri Dalam Negeri Nomor 100.1.1-6117 Tahun 2022 yang bisa digunakan untuk api bmkg.`,
   });
 
