@@ -36,7 +36,7 @@ export default function SignInPage() {
           name="email"
           type="email"
           label="Email"
-          placeholder="john.doe@email.com"
+          placeholder="Masukkan email anda disini..."
           autoComplete="email"
           required
         />
@@ -44,7 +44,8 @@ export default function SignInPage() {
           id="password"
           name="password"
           type="password"
-          label="Kata Sandi"
+          label="Password"
+          placeholder="Masukkan password anda disini..."
           autoComplete="current-password"
           required
         />
