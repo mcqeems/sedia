@@ -4,8 +4,6 @@ import {
   IconMoodSad,
   IconRipple,
   IconRulerMeasure2,
-  IconWorldLatitude,
-  IconWorldLongitude,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -14,21 +12,26 @@ import getGempa from "@/lib/dashboard/tops/getGempa";
 
 export default function GempaBumi() {
   const { dispatch, state } = useDashContext();
+  const refreshVersion = state.status.refreshVersion;
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    void refreshVersion;
+
     const fetchGempa = async () => {
       try {
+        setIsLoading(true);
         const data = await getGempa();
         dispatch({ type: "SET_STATE", payload: { gempaInfo: data } });
-        setIsLoading(false);
       } catch (error) {
         console.error("Error when fetching gempa data: ", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchGempa();
-  }, [dispatch]);
+  }, [dispatch, refreshVersion]);
 
   if (isLoading) {
     return (

@@ -24,6 +24,7 @@ interface Status {
   loadingEarthquakeNews: boolean;
   loadingMap: boolean;
   loadingAi: boolean;
+  refreshVersion: number;
 }
 
 interface DashboardStates {
@@ -49,6 +50,7 @@ const defaultDash: DashboardStates = {
     loadingEarthquakeNews: true,
     loadingMap: true,
     loadingAi: true,
+    refreshVersion: 0,
   },
 };
 

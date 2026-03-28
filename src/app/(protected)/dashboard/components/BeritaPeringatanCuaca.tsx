@@ -10,27 +10,34 @@ import getPeringatanCuaca, {
 } from "@/lib/dashboard/bottoms/getPeringatanCuaca";
 
 export default function BeritaPeringatanCuaca() {
+  const { dispatch, state } = useDashContext();
+  const refreshVersion = state.status.refreshVersion;
   const [isLoading, setIsLoading] = useState(true);
   const [peringatanCuaca, setPeringatanCuaca] = useState<WeatherAlert[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedAlertIndex, setExpandedAlertIndex] = useState<number | null>(
     null,
   );
-  const { dispatch } = useDashContext();
 
   useEffect(() => {
+    void refreshVersion;
+
     const fetchPeringatan = async () => {
-      const response = await getPeringatanCuaca();
-      setPeringatanCuaca(response);
-      dispatch({
-        type: "SET_STATE",
-        payload: { peringatanCuaca: response[0] },
-      });
-      setIsLoading(false);
+      try {
+        setIsLoading(true);
+        const response = await getPeringatanCuaca();
+        setPeringatanCuaca(response);
+        dispatch({
+          type: "SET_STATE",
+          payload: { peringatanCuaca: response[0] },
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchPeringatan();
-  }, [dispatch]);
+  }, [dispatch, refreshVersion]);
 
   if (isLoading) {
     return (

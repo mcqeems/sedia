@@ -26,6 +26,7 @@ type AnalysisContent = {
 
 export default function AiAnalysis() {
   const { state } = useDashContext();
+  const refreshVersion = state.status.refreshVersion;
   // biome-ignore lint/suspicious/noExplicitAny: it's okay
   const [analysis, setAnalysis] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,8 +73,11 @@ export default function AiAnalysis() {
   }, [analysis?.updated_at]);
 
   useEffect(() => {
+    void refreshVersion;
+
     const fetchAnalysisData = async () => {
       try {
+        setLoading(true);
         const data = await getAnalysis();
         if (data?.status) {
           setAnalysis(data);
@@ -85,7 +89,7 @@ export default function AiAnalysis() {
       }
     };
     fetchAnalysisData();
-  }, []);
+  }, [refreshVersion]);
 
   const handleGenerate = async () => {
     setGenerating(true);

@@ -30,13 +30,17 @@ const weatherTranslations: Record<string, string> = {
 
 export default function WeatherCard() {
   const { dispatch, state } = useDashContext();
+  const refreshVersion = state.status.refreshVersion;
   const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    void refreshVersion;
+
     if (state.state.latitude && state.state.longitude) {
       const fetchWeather = async () => {
         try {
+          setIsLoading(true);
           const data = await getWeather({
             latitude: state.state.latitude,
             longitude: state.state.longitude,
@@ -52,7 +56,7 @@ export default function WeatherCard() {
 
       fetchWeather();
     }
-  }, [state.state.latitude, state.state.longitude, dispatch]);
+  }, [state.state.latitude, state.state.longitude, refreshVersion, dispatch]);
 
   if (isLoading) {
     return (

@@ -14,6 +14,7 @@ import getProfile from "@/lib/supabase/getProfile";
 
 export default function PrakiraanCuaca() {
   const { dispatch, state } = useDashContext();
+  const refreshVersion = state.status.refreshVersion;
   const [predictionData, setPredictionData] = useState<WeatherResponse>();
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<WeatherTimeline[] | null>(
@@ -21,6 +22,8 @@ export default function PrakiraanCuaca() {
   );
 
   useEffect(() => {
+    void refreshVersion;
+
     const fetchPrediction = async () => {
       if (state.state.displayLocation) {
         try {
@@ -47,7 +50,7 @@ export default function PrakiraanCuaca() {
     };
 
     fetchPrediction();
-  }, [state.state.displayLocation, state.state.adm4, dispatch]);
+  }, [state.state.displayLocation, state.state.adm4, refreshVersion, dispatch]);
 
   if (loading) {
     return (

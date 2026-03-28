@@ -5,8 +5,9 @@ import {
   IconDotsVertical,
   IconMapPin,
   IconPencil,
+  IconRefresh,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDashContext } from "@/context/dashContext";
 import getAdmCode from "@/lib/dashboard/location/getAdmCode";
 import reverseGeoLocation from "@/lib/dashboard/location/reverseGeoLocation";
@@ -153,6 +154,7 @@ export default function Location({
   const [openDropdownRegencies, setOpenDropdownRegencies] = useState(false);
   const [openActionOptions, setOpenActionOptions] = useState(false);
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showMissingGeoPopup, setShowMissingGeoPopup] = useState(false);
   const [forceManual, setForceManual] = useState(false);
@@ -201,67 +203,85 @@ export default function Location({
     }
   }, [selectedProvinsi]);
 
-  useEffect(() => {
-    const fetchLocationData = async () => {
-      const profile = await getProfile();
+  const fetchLocationData = useCallback(async () => {
+    const profile = await getProfile();
 
-      if (profile?.adm_4 && profile?.display_location) {
+    if (profile?.adm_4 && profile?.display_location) {
+      dispatch({
+        type: "SET_STATE",
+        payload: {
+          displayLocation: profile.display_location,
+          adm4: profile.adm_4,
+          latitude: profile.langitude,
+          longitude: profile.longitude,
+        },
+      });
+      return;
+    }
+
+    if (!geo?.latitude || !geo?.longitude) {
+      dispatch({
+        type: "SET_STATE",
+        payload: { displayLocation: "Location unavailable" },
+      });
+      setShowMissingGeoPopup(true);
+      return;
+    }
+
+    const { latitude, longitude } = geo;
+
+    const data = await reverseGeoLocation({
+      latitude,
+      longitude,
+    });
+
+    if (data) {
+      try {
+        const code = await getAdmCode(data.display_name);
+        await updateProfile({
+          displayLocation: data.display_name,
+          langitude: latitude,
+          longitude: longitude,
+          adm4: code,
+        });
         dispatch({
           type: "SET_STATE",
           payload: {
-            displayLocation: profile.display_location,
-            latitude: profile.langitude,
-            longitude: profile.longitude,
+            displayLocation: data.display_name,
+            adm4: code,
+            latitude: latitude,
+            longitude: longitude,
           },
         });
-      } else {
-        if (!geo?.latitude || !geo?.longitude) {
-          dispatch({
-            type: "SET_STATE",
-            payload: { displayLocation: "Location unavailable" },
-          });
-          setShowMissingGeoPopup(true);
-          return;
-        }
-
-        const { latitude, longitude } = geo;
-
-        const data = await reverseGeoLocation({
-          latitude,
-          longitude,
-        });
-
-        if (data) {
-          try {
-            const code = await getAdmCode(data.display_name);
-            await updateProfile({
-              displayLocation: data.display_name,
-              langitude: latitude,
-              longitude: longitude,
-              adm4: code,
-            });
-            dispatch({
-              type: "SET_STATE",
-              payload: {
-                displayLocation: data.display_name,
-                latitude: latitude,
-                longitude: longitude,
-              },
-            });
-          } catch (err) {
-            console.error("Failed to get adm code", err);
-          }
-        } else {
-          dispatch({
-            type: "SET_STATE",
-            payload: { displayLocation: "Location unavailable" },
-          });
-        }
+      } catch (err) {
+        console.error("Failed to get adm code", err);
       }
-    };
+    } else {
+      dispatch({
+        type: "SET_STATE",
+        payload: { displayLocation: "Location unavailable" },
+      });
+    }
+  }, [dispatch, geo]);
 
+  useEffect(() => {
     fetchLocationData();
-  }, [geo, dispatch]);
+  }, [fetchLocationData]);
+
+  async function handleRefreshLocationData() {
+    setIsRefreshing(true);
+    setErrorMsg("");
+
+    try {
+      await fetchLocationData();
+      dispatch({
+        type: "SET_STATUS",
+        payload: { refreshVersion: Date.now() },
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  }
 
   async function handleSaveChangeLocation() {
     if (!selectedKabupaten || !selectedProvinsi) return;
@@ -498,6 +518,22 @@ export default function Location({
           <p className="line-clamp-2 max-w-sm md:max-w-lg">
             {state.state.displayLocation}
           </p>
+        </div>
+
+        <div className="flex">
+          <button
+            className={`h-[30px] w-[30px] rounded-full hover:bg-primary/25 transition-all outline-none cursor-pointer flex justify-center items-center focus:border focus:border-primary/50`}
+            type="button"
+            title={isRefreshing ? "Refreshing data..." : "Refresh data"}
+            onClick={handleRefreshLocationData}
+            disabled={isRefreshing}
+          >
+            <IconRefresh
+              height={20}
+              width={20}
+              className={isRefreshing ? "animate-spin" : ""}
+            />
+          </button>
         </div>
 
         {/* Dropdown Action Trigger */}

@@ -10,24 +10,33 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
+import { useDashContext } from "@/context/dashContext";
 import getBeritaGempa, {
   type EarthquakeResponse,
 } from "@/lib/dashboard/bottoms/getBeritaGempa";
 
 export default function BeritaGempa() {
+  const { state } = useDashContext();
+  const refreshVersion = state.status.refreshVersion;
   const [isLoading, setIsLoading] = useState(true);
   const [beritaGempa, setBeritaGempa] = useState<EarthquakeResponse>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   useEffect(() => {
+    void refreshVersion;
+
     const fetchBeritaGempa = async () => {
-      const data = await getBeritaGempa();
-      setBeritaGempa(data);
-      setIsLoading(false);
+      try {
+        setIsLoading(true);
+        const data = await getBeritaGempa();
+        setBeritaGempa(data);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchBeritaGempa();
-  }, []);
+  }, [refreshVersion]);
 
   if (isLoading) {
     return (
