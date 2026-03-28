@@ -74,7 +74,7 @@ export default function Outro() {
         viewport={{ once: true }}
         className="py-16"
       >
-        <div className="max-w-[1000px] mx-auto">
+        <div className="max-w-[1000px] md:mt-16 mt-8 mx-auto">
           <Logo className="text-primary" />
         </div>
       </motion.div>

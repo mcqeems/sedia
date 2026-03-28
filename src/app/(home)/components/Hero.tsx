@@ -9,7 +9,7 @@ export default function Hero() {
     show: {
       opacity: 1,
       transition: {
-        delayChildren: stagger(0.3, { startDelay: 0.3 }),
+        delayChildren: stagger(0.2, { startDelay: 0.2 }),
       },
     },
   } as const;
@@ -108,7 +108,7 @@ export default function Hero() {
             opacity: 1,
             y: 0,
             transition: {
-              delay: 2,
+              delay: 0.5,
               type: "spring",
               stiffness: 200,
               damping: 12,
@@ -158,7 +158,7 @@ export default function Hero() {
             opacity: 1,
             y: 0,
             transition: {
-              delay: 1.5,
+              delay: 0.4,
               // type: "spring",
               // stiffness: 200,
               // damping: 12,

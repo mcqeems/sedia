@@ -1,4 +1,5 @@
 import Navbar from "@/components/home/Navbar";
+import Footer from "./components/Footer";
 
 export default function HomeLayout({
   children,
@@ -11,6 +12,9 @@ export default function HomeLayout({
         <Navbar />
       </header>
       <main className="mt-24 w-full max-w-6xl mx-auto">{children}</main>
+      <footer>
+        <Footer />
+      </footer>
     </>
   );
 }
