@@ -43,7 +43,7 @@ function AnimatedUnderlineText({
 
 export default function Tentang() {
   return (
-    <section id="tentang" className="md:px-1 px-2 py-4 md:mt-16 mt-8">
+    <section id="tentang" className="md:px-1 px-2 md:pt-24 pt-16 pb-4">
       <motion.h2
         initial={{ opacity: 0, x: -100 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -59,6 +59,17 @@ export default function Tentang() {
       >
         Tentang Sedia
       </motion.h2>
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        style={{ originX: 0 }}
+        transition={{
+          duration: 0.8,
+          ease: "easeInOut",
+        }}
+        viewport={{ once: true }}
+        className="h-0.5 bg-slate-300 w-full max-w-xs mt-2"
+      ></motion.div>
       <div className="w-full max-w-4xl mx-auto mt-8 md:text-7xl text-4xl md:leading-24 leading-14 px-4 md:px-0">
         <motion.span
           className="inline-block will-change-transform"
@@ -122,7 +133,7 @@ export default function Tentang() {
           whileInView={{ scaleX: 1 }}
           style={{ originX: 0 }}
           transition={{
-            delay: 1.2,
+            delay: 1,
             duration: 0.8,
             ease: "easeInOut",
           }}
@@ -133,7 +144,7 @@ export default function Tentang() {
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{
-            delay: 1.2,
+            delay: 1,
             type: "spring",
             duration: 0.8,
           }}
