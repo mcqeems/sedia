@@ -5,7 +5,9 @@ import { useRef } from "react";
 export default function DragContainer({
   children,
 }: {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((ref: React.RefObject<HTMLDivElement | null>) => React.ReactNode);
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
