@@ -327,17 +327,20 @@ export async function POST(request: Request) {
         : null,
   };
 
-  const historyText = (history ?? [])
-    .map(
-      (item) =>
-        `${item.role === "user" ? "User" : "Assistant"}: ${item.content}`,
-    )
-    .join("\n");
+  const historyMessages = (history ?? []).map((item) => ({
+    role: item.role === "user" ? "user" : "model",
+    parts: [{ text: item.content }],
+  }));
+
+  const dynamicContext = `\n\n## USER PROFILE TERBARU\n${JSON.stringify(userProfileContext, null, 2)}\n\n## KNOWLEDGE BASE TERBARU\n${JSON.stringify(liveKnowledgeBase, null, 2)}\n\n## INSTRUKSI KONTEKS\n- Gunakan knowledge base terbaru di atas sebagai referensi utama.\n- Jika sebagian data null/tidak tersedia, jelaskan keterbatasannya secara singkat.\n- Prioritaskan rekomendasi yang relevan dengan profil dan lokasi pengguna.`;
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const streamResponse = await ai.models.generateContentStream({
     model: "gemini-3.1-flash-lite-preview",
-    contents: `${SYSTEM_PROMPT_TEMPLATE}\n\n## USER PROFILE TERBARU\n${JSON.stringify(userProfileContext, null, 2)}\n\n## KNOWLEDGE BASE TERBARU\n${JSON.stringify(liveKnowledgeBase, null, 2)}\n\n## INSTRUKSI KONTEKS\n- Gunakan knowledge base terbaru di atas sebagai referensi utama.\n- Jika sebagian data null/tidak tersedia, jelaskan keterbatasannya secara singkat.\n- Prioritaskan rekomendasi yang relevan dengan profil dan lokasi pengguna.\n\n## CHAT HISTORY\n${historyText}\n\nAssistant:`,
+    config: {
+      systemInstruction: SYSTEM_PROMPT_TEMPLATE + dynamicContext,
+    },
+    contents: historyMessages,
   });
 
   let assistantMessage = "";
