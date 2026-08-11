@@ -1,6 +1,6 @@
 "use server";
 
-import { GoogleGenAI } from "@google/genai";
+import { getLlm, LLM_MODEL } from "@/lib/ai";
 import insertAnalysis from "@/lib/supabase/insertAnalysis";
 import updateAnalysis from "@/lib/supabase/updateAnalysis";
 
@@ -28,7 +28,7 @@ interface Response {
 }
 
 const getAiInstance = () => {
-  return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  return getLlm();
 };
 
 export default async function getAiAnalyisis({
@@ -41,9 +41,12 @@ export default async function getAiAnalyisis({
   cuaca,
 }: Prerequisites) {
   const ai = getAiInstance();
-  const response = await ai.models.generateContent({
-    model: "gemini-3.1-flash-lite-preview",
-    contents: `
+  const response = await ai.chat.completions.create({
+    model: LLM_MODEL,
+    messages: [
+      {
+        role: "user",
+        content: `
 ### ROLE
 Anda adalah Sistem Pakar Analisis Bencana (Disaster Analysis Engine). Tugas Anda adalah mensintesis data cuaca dan seismik real-time menjadi penilaian risiko yang akurat untuk pengguna.
 
@@ -90,9 +93,11 @@ ${peringatanCuaca}
   }
 }
 		`,
+      },
+    ],
   });
 
-  const textResponse = response.text || "";
+  const textResponse = response.choices[0]?.message.content || "";
   const cleanedText = textResponse
     .replace(/```json/g, "")
     .replace(/```/g, "")

@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { getLlm, LLM_MODEL } from "@/lib/ai";
 import getGempa from "@/lib/dashboard/tops/getGempa";
 import getWeather from "@/lib/dashboard/tops/getWeather";
 import getWeatherPrediction from "@/lib/dashboard/tops/getWeatherPrediction";
@@ -327,20 +327,30 @@ export async function POST(request: Request) {
         : null,
   };
 
-  const historyMessages = (history ?? []).map((item) => ({
-    role: item.role === "user" ? "user" : "model",
-    parts: [{ text: item.content }],
-  }));
+  const historyMessages: Array<
+    | {
+        role: "user";
+        content: string;
+      }
+    | {
+        role: "assistant";
+        content: string;
+      }
+  > = (history ?? []).map((item) =>
+    item.role === "user"
+      ? { role: "user", content: item.content }
+      : { role: "assistant", content: item.content },
+  );
 
   const dynamicContext = `\n\n## USER PROFILE TERBARU\n${JSON.stringify(userProfileContext, null, 2)}\n\n## KNOWLEDGE BASE TERBARU\n${JSON.stringify(liveKnowledgeBase, null, 2)}\n\n## INSTRUKSI KONTEKS\n- Gunakan knowledge base terbaru di atas sebagai referensi utama.\n- Jika sebagian data null/tidak tersedia, jelaskan keterbatasannya secara singkat.\n- Prioritaskan rekomendasi yang relevan dengan profil dan lokasi pengguna.`;
 
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  const streamResponse = await ai.models.generateContentStream({
-    model: "gemini-3.1-flash-lite-preview",
-    config: {
-      systemInstruction: SYSTEM_PROMPT_TEMPLATE + dynamicContext,
-    },
-    contents: historyMessages,
+  const streamResponse = await getLlm().chat.completions.create({
+    model: LLM_MODEL,
+    stream: true,
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT_TEMPLATE + dynamicContext },
+      ...historyMessages,
+    ],
   });
 
   let assistantMessage = "";
@@ -350,7 +360,7 @@ export async function POST(request: Request) {
     async start(controller) {
       try {
         for await (const chunk of streamResponse) {
-          const text = chunk.text ?? "";
+          const text = chunk.choices[0]?.delta?.content ?? "";
           if (!text) {
             continue;
           }

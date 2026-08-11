@@ -44,6 +44,7 @@ export const metadata: Metadata = {
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: "Sedia | Pantau Cuaca dan Kesiapsiagaan Bencana",

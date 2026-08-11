@@ -23,7 +23,6 @@ Sedia adalah aplikasi pemantauan cuaca dan potensi bencana yang membantu penggun
 
 ## Tech Stack
 
-
 - Next.js (App Router)
 - React
 - TypeScript
@@ -53,7 +52,9 @@ Jika file `.env.example` belum tersedia, buat `.env.local` lalu isi variabel yan
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_OPEN_WEATHER_API_KEY=
-GEMINI_API_KEY=
+LLM_API_KEY=
+LLM_MODEL=
+LLM_BASE_URL=
 ```
 
 3. Jalankan server development:
@@ -67,6 +68,7 @@ npm run dev
 http://localhost:3000
 
 ## Catatan
+
 - Agar geolocation dapat berjalan pastikan jalankan next js dengan https.
 - Pastikan koneksi internet aktif untuk pengambilan data cuaca/bencana.
 - Untuk akurasi lokasi terbaik, aktifkan izin lokasi pada browser/perangkat.
