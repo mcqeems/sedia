@@ -1,6 +1,10 @@
 "use server";
 
 import { getLlm, LLM_MODEL } from "@/lib/ai";
+import type { WeatherAlert } from "@/lib/dashboard/bottoms/getPeringatanCuaca";
+import type { EarthquakeData } from "@/lib/dashboard/tops/getGempa";
+import type { WeatherResponse } from "@/lib/dashboard/tops/getWeather";
+import { fromDashboardData, type RiskScore } from "@/lib/spk/risk";
 import insertAnalysis from "@/lib/supabase/insertAnalysis";
 import updateAnalysis from "@/lib/supabase/updateAnalysis";
 
@@ -9,9 +13,9 @@ interface Prerequisites {
   adm4?: string;
   latitude?: string;
   longitude?: string;
-  gempaInfo?: string;
-  peringatanCuaca?: string;
-  cuaca?: string;
+  gempaInfo?: EarthquakeData | null;
+  peringatanCuaca?: WeatherAlert | WeatherAlert[] | null;
+  cuaca?: WeatherResponse | null;
 }
 
 interface Content {
@@ -40,6 +44,10 @@ export default async function getAiAnalyisis({
   peringatanCuaca,
   cuaca,
 }: Prerequisites) {
+  const riskScore = fromDashboardData({ cuaca, gempaInfo, peringatanCuaca });
+
+  const riskContext = buildRiskContext(riskScore);
+
   const ai = getAiInstance();
   const response = await ai.chat.completions.create({
     model: LLM_MODEL,
@@ -58,27 +66,30 @@ adm_4: ${adm4}
 latitude: ${latitude}
 longitude: ${longitude}
 
-2. Cuaca Saat Ini (Dari Lokasi Client):
-${cuaca}
+2. Skor Risiko Simulasi (SPK/SAW — harus dijadikan acuan objektif):
+${riskContext}
 
-3. Gempa Bumi Terkini (Nasional/Umum):
-${gempaInfo}
+3. Cuaca Saat Ini (Dari Lokasi Client):
+${cuaca ? JSON.stringify(cuaca, null, 2) : "Tidak ada data cuaca"}
 
-4. Peringatan Dini Cuaca (Nasional/Umum):
-${peringatanCuaca}
+4. Gempa Bumi Terkini (Nasional/Umum):
+${gempaInfo ? JSON.stringify(gempaInfo, null, 2) : "Tidak ada data gempa"}
+
+5. Peringatan Dini Cuaca (Nasional/Umum):
+${peringatanCuaca ? JSON.stringify(peringatanCuaca, null, 2) : "Tidak ada peringatan cuaca"}
 
 ### OUTPUT RULES
 1. Output HARUS selalu dalam format JSON.
 2. Gunakan Bahasa Indonesia yang formal namun mudah dipahami.
-3. Status harus dipilih dari salah satu kategori berikut berdasarkan tingkat risiko:
+3. Status HARUS sama persis dengan "level" pada Skor Risiko Simulasi di atas.
+4. Status harus dipilih dari salah satu kategori berikut berdasarkan tingkat risiko:
    - "Aman": Tidak ada ancaman terdeteksi.
    - "Waspada": Ada potensi gangguan kecil (misal: hujan sedang berkepanjangan).
    - "Siaga": Potensi bencana tinggi dalam 24-72 jam (misal: cuaca ekstrem, gempa besar di dekat lokasi).
    - "Awas": Ancaman langsung atau bencana sedang terjadi.
 
 ### LOGIKA PENILAIAN (HEURISTICS)
-- Skalakan status ke "Siaga" jika prakiraan 3 hari menunjukkan hujan lebat/badai secara berturut-turut.
-- Skalakan status ke "Awas" jika ada Gempa > 5.0 SR dalam radius < 150km dari lokasi client atau jika ada Peringatan Dini Cuaca level Merah di lokasi client.
+- Mulailah penilaian dari Skor Risiko Simulasi, lalu jelaskan faktor-faktor yang menyebabkannya.
 - Jika data bertabrakan (misal: cuaca cerah tapi ada peringatan dini badai), prioritaskan Peringatan Dini (Early Warning).
 
 ### JSON STRUCTURE
@@ -114,14 +125,30 @@ ${peringatanCuaca}
   const updated = await updateAnalysis({
     status: data.status,
     content: data.content,
+    riskScore: riskScore.score,
   });
 
   if (!updated) {
     await insertAnalysis({
       status: data.status,
       content: data.content,
+      riskScore: riskScore.score,
     });
   }
 
-  return data;
+  return { ...data, riskScore };
+}
+
+function buildRiskContext(riskScore: RiskScore): string {
+  const contributors = riskScore.breakdown
+    .map(
+      (b) =>
+        `${b.criterion}: nilai ${b.raw}, kontribusi ${Math.round(b.contribution * 100)}% dari skor`,
+    )
+    .join("\n");
+
+  return `Skor Risiko: ${riskScore.score}/100
+Level: ${riskScore.level}
+Rincian kontributor:
+${contributors}`;
 }

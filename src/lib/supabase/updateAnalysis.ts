@@ -13,9 +13,14 @@ interface Content {
 interface Analysis {
   status: string;
   content: string | Content;
+  riskScore?: number | null;
 }
 
-export default async function updateAnalysis({ status, content }: Analysis) {
+export default async function updateAnalysis({
+  status,
+  content,
+  riskScore,
+}: Analysis) {
   const supabase = await createClient();
   const nowIsoString = new Date().toISOString();
 
@@ -33,6 +38,7 @@ export default async function updateAnalysis({ status, content }: Analysis) {
     .update({
       status: status,
       content: content,
+      risk_score: riskScore ?? null,
       updated_at: nowIsoString,
     })
     .eq("user_id", user.id)

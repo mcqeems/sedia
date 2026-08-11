@@ -4,6 +4,7 @@ interface Analysis {
   id?: string | null;
   status?: string | null;
   content?: string | null;
+  risk_score?: number | null;
   updated_at?: string | null;
 }
 
@@ -20,7 +21,7 @@ export default async function getAnalysis() {
 
   const { data, error } = await supabase
     .from("analysis")
-    .select("id, status, content, updated_at")
+    .select("id, status, content, risk_score, updated_at")
     .eq("user_id", user.id)
     .order("updated_at", { ascending: false })
     .limit(1);

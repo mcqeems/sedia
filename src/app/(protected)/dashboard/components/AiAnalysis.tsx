@@ -5,6 +5,7 @@ import {
   IconAlertTriangle,
   IconCheck,
   IconFlame,
+  IconGauge,
   IconListCheck,
   IconRadioactive,
   IconShieldExclamation,
@@ -14,6 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 import Skeleton from "@/components/Skeleton";
 import { useDashContext } from "@/context/dashContext";
 import getAiAnalyisis from "@/lib/dashboard/tops/getAiAnalyisis";
+import { riskLevelFromScore } from "@/lib/spk/risk";
 import getAnalysis from "@/lib/supabase/getAnalysis";
 
 type AnalysisContent = {
@@ -52,6 +54,21 @@ export default function AiAnalysis() {
   const urgencyLevel = analysisContent?.urgency_level ?? 0;
   const urgencyLabel =
     urgencyLevel >= 7 ? "Tinggi" : urgencyLevel >= 4 ? "Sedang" : "Rendah";
+
+  const spkScore =
+    analysis?.riskScore?.score ??
+    (typeof analysis?.risk_score === "number" ? analysis.risk_score : null);
+  const spkLevel =
+    analysis?.riskScore?.level ??
+    (spkScore !== null ? riskLevelFromScore(spkScore) : null);
+  const spkContributors = analysis?.riskScore?.breakdown ?? [];
+  const spkBarColor: string =
+    {
+      Aman: "bg-green-400",
+      Waspada: "bg-yellow-400",
+      Siaga: "bg-orange-400",
+      Awas: "bg-red-500",
+    }[String(spkLevel ?? "Aman")] ?? "bg-green-400";
   const updatedAtLabel = useMemo(() => {
     const rawUpdatedAt = analysis?.updated_at;
 
@@ -99,15 +116,9 @@ export default function AiAnalysis() {
         adm4: state.state.adm4,
         latitude: state.state.latitude,
         longitude: state.state.longitude,
-        gempaInfo: state.state.gempaInfo
-          ? JSON.stringify(state.state.gempaInfo)
-          : "Tidak ada data gempa",
-        peringatanCuaca: state.state.peringatanCuaca
-          ? JSON.stringify(state.state.peringatanCuaca)
-          : "Tidak ada peringatan cuaca",
-        cuaca: state.state.cuaca
-          ? JSON.stringify(state.state.cuaca)
-          : "Tidak ada data cuaca",
+        gempaInfo: state.state.gempaInfo ?? null,
+        peringatanCuaca: state.state.peringatanCuaca ?? null,
+        cuaca: state.state.cuaca ?? null,
       });
       setAnalysis(result);
     } catch (error) {
@@ -207,6 +218,25 @@ export default function AiAnalysis() {
                 </div>
               </div>
 
+              {spkScore !== null && (
+                <div className="mb-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs font-bold opacity-90">Skor Risiko</p>
+                    <p className="text-[11px] font-semibold opacity-80">
+                      {`${spkScore}/100${spkLevel ? ` · ${spkLevel}` : ""}`}
+                    </p>
+                  </div>
+                  <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${spkBarColor} rounded-full transition-all`}
+                      style={{
+                        width: `${Math.min(Math.max(spkScore, 0), 100)}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
               <p className="text-sm font-medium leading-snug">
                 {analysisContent?.headline}
               </p>
@@ -263,6 +293,63 @@ export default function AiAnalysis() {
                 <p className="text-sm opacity-80 leading-relaxed mb-4">
                   {analysisContent?.analysis_detail}
                 </p>
+
+                <div className="space-y-2 mb-4">
+                  <h3 className="text-sm uppercase tracking-wider font-bold flex items-center gap-1.5">
+                    <IconGauge className="w-3.5 h-3.5" /> Skor Risiko (SPK)
+                  </h3>
+                  {spkScore !== null && (
+                    <div className="rounded-lg bg-background/10 p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-semibold">
+                          {spkLevel ?? "—"}
+                        </p>
+                        <p className="text-[11px] opacity-70">
+                          {`${spkScore}/100`}
+                        </p>
+                      </div>
+                      <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${spkBarColor} rounded-full transition-all`}
+                          style={{
+                            width: `${Math.min(Math.max(spkScore, 0), 100)}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {spkContributors.length > 0 ? (
+                    <ul className="space-y-2">
+                      {[...spkContributors]
+                        .sort((a, b) => b.contribution - a.contribution)
+                        .map((c, idx) => (
+                          <li
+                            key={c.criterion}
+                            className="text-xs flex gap-2 items-start bg-background/10 p-2 rounded"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0" />
+                            <span className="opacity-90 leading-tight flex items-center justify-between w-full gap-2">
+                              <span>
+                                {c.criterion}
+                                {idx === 0 && (
+                                  <span className="text-[10px] opacity-60 ml-1">
+                                    (terbesar)
+                                  </span>
+                                )}
+                              </span>
+                              <span className="opacity-70">
+                                {`${Math.round(c.contribution * 100)}%`}
+                              </span>
+                            </span>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <p className="text-[11px] opacity-70">
+                      Rincian kontributor hanya tersedia pada analisis terbaru.
+                    </p>
+                  )}
+                </div>
 
                 <div className="space-y-2 mb-4">
                   <h3 className="text-sm uppercase tracking-wider font-bold flex items-center gap-1.5">
