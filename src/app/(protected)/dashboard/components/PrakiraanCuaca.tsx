@@ -27,10 +27,20 @@ export default function PrakiraanCuaca() {
     const fetchPrediction = async () => {
       if (state.state.displayLocation) {
         try {
-          setLoading(true);
           const userData = await getProfile();
+          const targetAdm = state.state.adm4 || userData.adm_4;
+
+          if (
+            predictionData?.lokasi?.adm4 &&
+            targetAdm === predictionData.lokasi.adm4
+          ) {
+            setLoading(false);
+            return;
+          }
+
+          setLoading(true);
           const response = await getWeatherPrediction({
-            adm: state.state.adm4 || userData.adm_4,
+            adm: targetAdm,
             displayLocation:
               state.state.displayLocation || userData.display_location,
           });
@@ -50,7 +60,13 @@ export default function PrakiraanCuaca() {
     };
 
     fetchPrediction();
-  }, [state.state.displayLocation, state.state.adm4, refreshVersion, dispatch]);
+  }, [
+    state.state.displayLocation,
+    state.state.adm4,
+    refreshVersion,
+    dispatch,
+    predictionData?.lokasi?.adm4,
+  ]);
 
   if (loading) {
     return (
