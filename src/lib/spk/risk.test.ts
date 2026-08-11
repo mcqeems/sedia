@@ -88,6 +88,20 @@ describe("fromDashboardData", () => {
     expect(result.breakdown[3].raw).toBe(2);
   });
 
+  test("fallbacks for rain when rain[1h] is omitted by API", () => {
+    // 3h fallback
+    const res3h = fromDashboardData({
+      cuaca: { rain: { "3h": 15 }, wind: { speed: 5 } },
+    } as Parameters<typeof fromDashboardData>[0]);
+    expect(res3h.breakdown[0].raw).toBe(5);
+
+    // Weather condition ID fallback (e.g. 502 Heavy Rain)
+    const resCondition = fromDashboardData({
+      cuaca: { weather: [{ id: 502 }], wind: { speed: 5 } },
+    } as Parameters<typeof fromDashboardData>[0]);
+    expect(resCondition.breakdown[0].raw).toBe(25);
+  });
+
   test("missing data contributes zero", () => {
     expect(computeRiskScore({}).score).toBe(0);
     expect(fromDashboardData({}).score).toBe(0);

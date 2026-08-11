@@ -77,8 +77,33 @@ export function fromDashboardData(input: {
   const alerts = input.peringatanCuaca;
   const alertCount = Array.isArray(alerts) ? alerts.length : alerts ? 1 : 0;
 
+  // 1. Direct 1-hour rain volume from OpenWeatherMap
+  let rainMm = input.cuaca?.rain?.["1h"] ?? 0;
+
+  // 2. Fallback to 3-hour rain volume if 1h is not present
+  // biome-ignore lint/suspicious/noExplicitAny: OpenWeatherMap API may return 3h
+  const rainObj = input.cuaca?.rain as any;
+  if (!rainMm && rainObj?.["3h"]) {
+    rainMm = Number(rainObj["3h"]) / 3;
+  }
+
+  // 3. Fallback to condition code (OpenWeatherMap weather[0].id) if rain property is omitted
+  if (!rainMm && input.cuaca?.weather?.[0]) {
+    const weatherId = input.cuaca.weather[0].id;
+    if (weatherId >= 200 && weatherId < 300) {
+      // Thunderstorm (hujan lebat + petir)
+      rainMm = 15;
+    } else if (weatherId >= 500 && weatherId <= 504) {
+      // Rain: 500 (light: 2.5mm), 501 (moderate: 7.5mm), 502-504 (heavy: 25mm)
+      rainMm = weatherId === 500 ? 2.5 : weatherId === 501 ? 7.5 : 25;
+    } else if (weatherId >= 300 && weatherId < 400) {
+      // Drizzle / gerimis
+      rainMm = 1.5;
+    }
+  }
+
   return computeRiskScore({
-    rainH1Mm: input.cuaca?.rain?.["1h"] ?? 0,
+    rainH1Mm: rainMm,
     windSpeedMps: input.cuaca?.wind?.speed ?? 0,
     gempaMagnitude: Number(input.gempaInfo?.Infogempa?.gempa?.Magnitude ?? 0),
     alertCount,
